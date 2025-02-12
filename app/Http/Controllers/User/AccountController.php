@@ -3,136 +3,67 @@
 namespace App\Http\Controllers\User;
 
 use App\Http\Controllers\Controller;
-use App\Models\Role;
+use App\Http\Requests\StoreUserRequest;
+use App\Http\Requests\UpdateUserRequest;
+use App\Http\Resources\UserResource;
 use App\Models\User;
+use App\Services\UserService;
 use Illuminate\Http\Request;
+use Symfony\Component\HttpFoundation\Response;
 
 class AccountController extends Controller
 {
-    //
+    protected UserService $userService;
+
+    public function __construct(UserService $userService)
+    {
+        $this->userService = $userService;
+    }
+    
     public function index(Request $request)
     {
-        $status = $request->get('status');
-        $role_id = $request->get('role_id');
-        $search = $request->get('search');
+        $users = $this->userService->getAllUsers(
+            $request->get('status'),
+            $request->get('role_id'),
+            $request->get('search')
+        );
 
-        $roles = Role::all();
-
-        $accounts = User::query()
-            ->when($status !== null, function ($query) use ($status) {
-                return $query->where('status', $status);
-            })
-            ->when($role_id, function ($query) use ($role_id) {
-                return $query->where('role_id', $role_id);
-            })
-            ->when($search, function ($query) use ($search) {
-                return $query->where(function ($q) use ($search) {
-                    $q->where('name', 'like', '%' . $search . '%')
-                        ->orWhere('email', 'like', '%' . $search . '%')
-                        ->orWhere('phone_number', 'like', '%' . $search . '%');
-                });
-            })
-            ->with('role')
-            ->paginate(10);
-
-        return view('user.account.index', compact('accounts', 'roles'));
+        return UserResource::collection($users);
     }
 
-
-    public function show($id)
+   
+    public function store(StoreUserRequest $request)
     {
-        $account = User::with('role')->findOrFail($id);
+        $user = $this->userService->createUser($request->validated());
 
-        return view('user.account.show', compact('account'));
+        return response()->json([
+            'message' => 'Tài khoản đã được tạo thành công.',
+            'data' => new UserResource($user)
+        ], Response::HTTP_CREATED);
     }
 
-    public function create()
+    
+    public function show(User $account)
     {
-        $roles = Role::all();
-
-        return view('user.account.create', compact('roles'));
+        return new UserResource($account);
     }
 
-    public function store(Request $request)
+    public function update(UpdateUserRequest $request, User $account)
     {
-        $validatedData = $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'required|email|unique:users,email',
-            'password' => 'required|string|min:8|confirmed',
-            'phone_number' => 'nullable|string|max:15',
-            'role_id' => 'required|exists:roles,id',
-            'status' => 'required|in:1,0',
-            'avatar' => 'nullable|image|mimes:jpg,jpeg,png,gif,svg|max:2048',
-        ]);
+        $this->userService->updateUser($account->id, $request->validated());
 
-        $validatedData['password'] = bcrypt($validatedData['password']);
-
-        $avatarPath = null;
-        if ($request->hasFile('avatar')) {
-            $file = $request->file('avatar');
-            $fileName = $file->getClientOriginalName();
-            $uniqueFileName = uniqid() . '_' . $fileName;
-            $avatarPath = $file->storeAs('avatars', $uniqueFileName, 'public');
-            $validatedData['avatar'] = $avatarPath;
-        }
-
-        User::create($validatedData);
-
-        return redirect()->route('account.index')->with('success', 'Tài khoản đã được tạo thành công.');
+        return response()->json([
+            'message' => 'Tài khoản đã được cập nhật thành công.',
+            'data' => new UserResource($account)
+        ], Response::HTTP_OK);
     }
 
-    public function edit($id)
+    public function destroy(User $account)
     {
-        $account = User::findOrFail($id);
-        $roles = Role::all();
-        return view('user.account.edit', compact('account', 'roles'));
-    }
+        $this->userService->deleteUser($account->id);
 
-    public function update(Request $request, $id)
-    {
-        $account = User::findOrFail($id);
-
-        $validatedData = $request->validate([
-            'phone_number' => 'nullable|string|max:15',
-            'role_id' => 'required|exists:roles,id',
-            'status' => 'required|boolean',
-            'avatar' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048', 
-            'password' => 'nullable|string|min:8|confirmed', 
-        ]);
-
-        if ($request->hasFile('avatar')) {
-            if ($account->avatar) {
-                $oldAvatarPath = public_path('storage/' . $account->avatar);
-                if (file_exists($oldAvatarPath)) {
-                    unlink($oldAvatarPath);
-                }
-            }
-
-            $file = $request->file('avatar');
-            $fileName = $file->getClientOriginalName();
-            $uniqueFileName = uniqid() . '_' . $fileName;
-            $avatarPath = $file->storeAs('avatars', $uniqueFileName, 'public');
-            $validatedData['avatar'] = $avatarPath;
-        }
-
-        if ($request->filled('password')) {
-            $validatedData['password'] = bcrypt($request->password);
-        } else {
-            unset($validatedData['password']);
-        }
-
-        $account->update($validatedData);
-
-        return redirect()->route('account.index')->with('success', 'Tài khoản đã được cập nhật thành công.');
-    }
-
-
-    public function destroy($id)
-    {
-        $account = User::findOrFail($id);
-
-        $account->delete();
-
-        return redirect()->route('account.index')->with('success', 'Tài khoản đã được xóa thành công.');
+        return response()->json([
+            'message' => 'Tài khoản đã được xóa thành công.'
+        ], Response::HTTP_OK);
     }
 }

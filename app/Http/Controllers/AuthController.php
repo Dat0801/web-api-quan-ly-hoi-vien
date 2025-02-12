@@ -16,14 +16,28 @@ class AuthController extends Controller
         ]);
 
         $user = User::where('email', $request->email)->first();
-        
+
         if (!$user || !Hash::check($request->password, $user->password)) {
             return response()->json(['message' => 'Unauthorized'], 401);
         }
-        
-        return response()->json([
-            'token' => $user->createToken('API Token')->plainTextToken
+
+        $token = $user->createToken('Admin Dashboard')->plainTextToken;
+
+        $user->tokens()->latest()->first()->update([
+            'expires_at' => now()->addHours(4),
         ]);
+
+        return response()->json([
+            'token' => $token,
+            'expires_at' => now()->addHours(4),
+        ]);
+
+    }
+
+    public function logout(Request $request)
+    {
+        $request->user()->tokens()->delete();
+        return response()->json(['message' => 'Logged out'], 200);
     }
 }
 
