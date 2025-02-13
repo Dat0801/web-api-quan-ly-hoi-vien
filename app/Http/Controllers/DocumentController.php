@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
@@ -8,10 +7,13 @@ use App\Services\DocumentService;
 use App\Http\Resources\DocumentResource;
 use App\Http\Requests\StoreDocumentRequest;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
+use App\Traits\ApiResponse;
 
 class DocumentController extends Controller
 {
-    protected $documentService;
+    use ApiResponse;
+
+    protected DocumentService $documentService;
 
     public function __construct(DocumentService $documentService)
     {
@@ -21,26 +23,19 @@ class DocumentController extends Controller
     public function index(Request $request): AnonymousResourceCollection
     {
         $documents = $this->documentService->getDocuments($request);
-        return DocumentResource::collection($documents);
+        return $this->success(DocumentResource::collection($documents), 'Lấy danh sách tài liệu thành công.');
     }
 
     public function store(StoreDocumentRequest $request): JsonResponse
     {
         $document = $this->documentService->storeDocument($request);
-        return response()->json([
-            'success' => true,
-            'data'    => new DocumentResource($document),
-            'message' => 'Tài liệu đã được thêm thành công'
-        ], 201);
+        return $this->success(new DocumentResource($document), 'Tài liệu đã được thêm thành công.', 201);
     }
 
     public function destroy($id): JsonResponse
     {
         $this->documentService->deleteDocument($id);
-        return response()->json([
-            'success' => true,
-            'message' => 'Tài liệu đã được xóa thành công!'
-        ]);
+        return $this->success(null, 'Tài liệu đã được xóa thành công.');
     }
 
     public function download($id)
@@ -49,6 +44,6 @@ class DocumentController extends Controller
 
         return $filePath
             ? response()->download($filePath)
-            : response()->json(['success' => false, 'message' => 'Tệp không tồn tại.'], 404);
+            : $this->error('Tệp không tồn tại.', 404);
     }
 }

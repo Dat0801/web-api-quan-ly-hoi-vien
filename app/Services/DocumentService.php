@@ -2,15 +2,15 @@
 
 namespace App\Services;
 
-use App\Repositories\DocumentRepository;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use App\Interfaces\DocumentRepositoryInterface;
 
 class DocumentService
 {
     protected $documentRepo;
 
-    public function __construct(DocumentRepository $documentRepo)
+    public function __construct(DocumentRepositoryInterface $documentRepo)
     {
         $this->documentRepo = $documentRepo;
     }
@@ -29,7 +29,7 @@ class DocumentService
         $fileName = $file->getClientOriginalName();
         $path = $file->storeAs('documents', $fileName, 'public');
 
-        return $this->documentRepo->createDocument([
+        return $this->documentRepo->create([
             'file_name' => $fileName,
             'file_extension' => $file->extension(),
             'file_path' => $path
@@ -38,7 +38,7 @@ class DocumentService
 
     public function deleteDocument($id)
     {
-        $document = $this->documentRepo->findDocumentById($id);
+        $document = $this->documentRepo->findById($id);
         if (!$document) {
             return false;
         }
@@ -47,12 +47,12 @@ class DocumentService
             Storage::disk('public')->delete($document->file_path);
         }
 
-        return $this->documentRepo->deleteDocument($id);
+        return $this->documentRepo->delete($id);
     }
 
     public function downloadDocument($id)
     {
-        $document = $this->documentRepo->findDocumentById($id);
+        $document = $this->documentRepo->findById($id);
         if (!$document) {
             return null;
         }

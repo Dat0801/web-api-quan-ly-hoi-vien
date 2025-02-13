@@ -7,10 +7,10 @@ use App\Repositories\BaseRepository;
 use App\Repositories\UserRepository;
 use App\Repositories\RoleRepository;
 use App\Repositories\DocumentRepository;
-use App\Repositories\Interfaces\BaseRepositoryInterface;
-use App\Repositories\Interfaces\UserRepositoryInterface;
-use App\Repositories\Interfaces\RoleRepositoryInterface;
-use App\Repositories\Interfaces\DocumentRepositoryInterface;
+use App\Interfaces\BaseRepositoryInterface;
+use App\Interfaces\UserRepositoryInterface;
+use App\Interfaces\RoleRepositoryInterface;
+use App\Interfaces\DocumentRepositoryInterface;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -24,8 +24,8 @@ class AppServiceProvider extends ServiceProvider
         //
         $this->app->bind(BaseRepositoryInterface::class, BaseRepository::class);
         $this->app->bind(UserRepositoryInterface::class, UserRepository::class);
-        //$this->app->bind(RoleRepositoryInterface::class, RoleRepository::class);
-        //$this->app->bind(DocumentRepositoryInterface::class, DocumentRepository::class);
+        $this->app->bind(RoleRepositoryInterface::class, RoleRepository::class);
+        $this->app->bind(DocumentRepositoryInterface::class, DocumentRepository::class);
     }
 
     /**

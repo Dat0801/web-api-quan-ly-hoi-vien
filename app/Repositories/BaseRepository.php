@@ -2,7 +2,7 @@
 namespace App\Repositories;
 
 use Illuminate\Database\Eloquent\Model;
-use App\Repositories\Interfaces\BaseRepositoryInterface;
+use App\Interfaces\BaseRepositoryInterface;
 abstract class BaseRepository implements BaseRepositoryInterface
 {
     protected Model $model;
@@ -21,7 +21,6 @@ abstract class BaseRepository implements BaseRepositoryInterface
     {
         return $this->model->findOrFail($id);
     }
-
     public function create(array $data)
     {
         return $this->model->create($data);

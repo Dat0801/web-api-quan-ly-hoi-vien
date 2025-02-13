@@ -1,161 +1,54 @@
-<?php
-
+<?php 
 namespace App\Http\Controllers\User;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\StoreRoleRequest;
+use App\Http\Requests\UpdateRoleRequest;
+use App\Http\Resources\RoleResource;
+use App\Services\RoleService;
 use Illuminate\Http\Request;
-use App\Models\Role;
-use App\Models\Permission;
+use Illuminate\Http\JsonResponse;
+use App\Traits\ApiResponse;
 
 class RoleController extends Controller
 {
-    //
-    public function index(Request $request)
+    use ApiResponse; 
+
+    protected $roleService;
+
+    public function __construct(RoleService $roleService)
     {
-        $search = $request->get('search');
-
-        $roles = Role::with('permissions')
-            ->when($search, function ($query, $search) {
-                return $query->where('role_name', 'like', '%' . $search . '%');
-            })
-            ->paginate(10);
-
-        return view('user.role.index', compact('roles'));
+        $this->roleService = $roleService;
     }
 
-    public function create()
+    public function index(Request $request): JsonResponse
     {
-        $permissions = Permission::all()->groupBy('group_name');
-
-        return view('user.role.create', compact('permissions'));
+        $roles = $this->roleService->getAllRoles($request->get('search'));
+        return $this->success(RoleResource::collection($roles));
     }
 
-    public function store(Request $request)
+    public function store(StoreRoleRequest $request): JsonResponse
     {
-        $validatedData = $request->validate([
-            'role_name' => 'required|string|max:255|unique:roles,role_name',
-            'role_id' => 'required|string|max:255|unique:roles,role_id',
-            'permissions' => 'array',
-        ], [
-            'role_name.required' => 'Tên vai trò không được để trống.',
-            'role_name.unique' => 'Tên vai trò đã tồn tại.',
-            'role_id.required' => 'Mã vai trò không được để trống.',
-            'role_id.unique' => 'Mã vai trò đã tồn tại.',
-            'permissions.array' => 'Danh sách quyền không hợp lệ.',
-        ]);
-
-        try {
-            $role = Role::create([
-                'role_name' => $validatedData['role_name'],
-                'role_id' => $validatedData['role_id'],
-            ]);
-
-            if (isset($validatedData['permissions']) && is_array($validatedData['permissions'])) {
-                $existingPermissions = Permission::pluck('id')->toArray();
-                $newPermissions = [];
-
-                foreach ($validatedData['permissions'] as $permissionId) {
-                    $groupID = explode('.', $permissionId)[0];
-                    if (!in_array($permissionId, $existingPermissions)) {
-                        $newPermission = Permission::create([
-                            'permission_name' => "Chức năng $permissionId",
-                            'group_name' => "Nhóm chức năng $groupID",
-                        ]);
-                        $newPermissions[] = $newPermission->id;
-                    } else {
-                        $newPermissions[] = $permissionId;
-                    }
-                }
-
-                $currentPermissions = $role->permissions->pluck('id')->toArray();
-                $uniquePermissions = array_diff($newPermissions, $currentPermissions);
-
-                $role->permissions()->syncWithoutDetaching($uniquePermissions);
-            }
-
-            return redirect()->route('role.index')
-                ->with('success', 'Vai trò đã được thêm thành công.');
-        } catch (\Exception $e) {
-            return redirect()->back()
-                ->withErrors(['error' => 'Đã xảy ra lỗi trong quá trình lưu vai trò: ' . $e->getMessage()])
-                ->withInput();
-        }
+        $role = $this->roleService->createRole($request->validated());
+        return $this->success(new RoleResource($role), 'Vai trò đã được tạo thành công!', 201);
     }
 
-    public function show($id)
+    public function show($id): JsonResponse
     {
-        $role = Role::with('permissions', 'users')->findOrFail($id);
-
-        $permissionsByGroup = Permission::all()->groupBy('group_name');
-
-        return view('user.role.show', compact('role', 'permissionsByGroup'));
+        $role = $this->roleService->getRoleById($id);
+        return $role ? $this->success(new RoleResource($role)) : $this->error('Vai trò không tồn tại!', 404);
     }
 
-    public function edit($id)
+    public function update(UpdateRoleRequest $request, $id): JsonResponse
     {
-        $role = Role::findOrFail($id);
-        $permissions = Permission::all()->groupBy('group_name'); 
-        $rolePermissions = $role->permissions->pluck('id')->toArray();
-
-        return view('user.role.edit', compact('role', 'permissions', 'rolePermissions'));
+        $role = $this->roleService->updateRole($id, $request->validated());
+        return $this->success(new RoleResource($role), 'Cập nhật vai trò thành công!');
     }
 
-    public function update(Request $request, $id)
+    public function destroy($id): JsonResponse
     {
-        $request->validate([
-            'role_name' => 'required|string|max:255',
-            'role_id' => 'required|string|max:50|unique:roles,role_id,' . $id,
-            'permissions' => 'nullable|array',
-            'permissions.*' => 'string',
-        ]);
-
-        $role = Role::findOrFail($id);
-
-        $role->update([
-            'role_name' => $request->input('role_name'),
-            'role_id' => $request->input('role_id'),
-        ]);
-
-        if ($request->has('permissions')) {
-            $submittedPermissions = $request->input('permissions');
-            $existingPermissions = Permission::pluck('id')->toArray(); 
-            $validPermissions = [];
-
-            foreach ($submittedPermissions as $permissionId) {
-                if (!in_array($permissionId, $existingPermissions)) {
-                    $groupID = explode('.', $permissionId)[0];
-
-                    $newPermission = Permission::create([
-                        'permission_name' => "Chức năng $permissionId",
-                        'group_name' => "Nhóm chức năng $groupID",
-                    ]);
-                    $newPermissions[] = $newPermission->id;
-                    $validPermissions[] = $newPermission->id;
-                } else {
-                    $validPermissions[] = $permissionId;
-                }
-            }
-
-            $role->permissions()->sync($validPermissions);
-        } else {
-            $role->permissions()->detach();
-        }
-
-        return redirect()->route('role.index')->with('success', 'Cập nhật vai trò thành công');
-    }
-
-    public function destroy($id)
-    {
-        try {
-            $role = Role::findOrFail($id);
-
-            $role->permissions()->detach();
-
-            $role->delete();
-
-            return redirect()->route('role.index')->with('success', 'Xóa vai trò thành công');
-        } catch (\Exception $e) {
-            return redirect()->route('role.index')->withErrors(['error' => 'Error deleting role: ' . $e->getMessage()]);
-        }
+        return $this->roleService->deleteRole($id)
+            ? $this->success(null, 'Xóa vai trò thành công!')
+            : $this->error('Vai trò không tồn tại hoặc không thể xóa!', 404);
     }
 }

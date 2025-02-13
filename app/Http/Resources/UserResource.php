@@ -3,6 +3,7 @@
 namespace App\Http\Resources;
 
 use Illuminate\Http\Resources\Json\JsonResource;
+use Carbon\Carbon;
 
 class UserResource extends JsonResource
 {
@@ -18,10 +19,11 @@ class UserResource extends JsonResource
             'id' => $this->id,
             'name' => $this->name,
             'email' => $this->email,
-            'phone_number' => $this->phone_number,
-            // 'role' => new RoleResource($this->role),
+            'phoneNumber' => $this->phone_number,
+            'role' => new RoleResource($this->role),
             'status' => $this->status,
-            'avatar' => $this->avatar ? asset('storage/' . $this->avatar) : null,
+            'avatar' => $this->avatar ? asset(path: 'storage/' . $this->avatar) : null,
+            'lastLogin' => $this->last_login ? Carbon::parse($this->last_login)->format('Y-m-d H:i:s') : null,
         ];
     }
 }

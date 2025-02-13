@@ -1,7 +1,7 @@
 <?php
 namespace App\Services;
 
-use App\Repositories\Interfaces\UserRepositoryInterface;
+use App\Interfaces\UserRepositoryInterface;
 use Illuminate\Support\Facades\Storage;
 
 class UserService

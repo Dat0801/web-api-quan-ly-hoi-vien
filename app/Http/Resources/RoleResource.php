@@ -10,9 +10,23 @@ class RoleResource extends JsonResource
     {
         return [
             'id' => $this->id,
-            'role_name' => $this->role_name,
-            'role_id' => $this->role_id,
-            'permissions' => $this->permissions->pluck('id'),
+            'roleCode' => $this->role_id,
+            'roleName' => $this->role_name,
+            $this->mergeWhen(!request()->is('api/users*'), [
+                'permissions' => $this->groupPermissions(),
+            ]),
         ];
+    }
+
+    private function groupPermissions()
+    {
+        $grouped = $this->permissions->groupBy('group_name')->map(function ($permissions, $groupName) {
+            return [
+                'groupName' => $groupName,
+                'permissions' => PermissionResource::collection($permissions),
+            ];
+        });
+
+        return $grouped->values();
     }
 }

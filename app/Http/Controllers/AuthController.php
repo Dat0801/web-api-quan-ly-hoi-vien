@@ -1,13 +1,15 @@
-<?php
-
+<?php 
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use App\Models\User;
+use App\Traits\ApiResponse;
 
 class AuthController extends Controller
 {
+    use ApiResponse;
+
     public function login(Request $request)
     {
         $request->validate([
@@ -18,7 +20,7 @@ class AuthController extends Controller
         $user = User::where('email', $request->email)->first();
 
         if (!$user || !Hash::check($request->password, $user->password)) {
-            return response()->json(['message' => 'Unauthorized'], 401);
+            return $this->error('Unauthorized', 401);
         }
 
         $token = $user->createToken('Admin Dashboard')->plainTextToken;
@@ -27,17 +29,15 @@ class AuthController extends Controller
             'expires_at' => now()->addHours(4),
         ]);
 
-        return response()->json([
+        return $this->success([
             'token' => $token,
-            'expires_at' => now()->addHours(4),
-        ]);
-
+            'expiresAt' => now()->addHours(4),
+        ], 'Login successful');
     }
 
     public function logout(Request $request)
     {
         $request->user()->tokens()->delete();
-        return response()->json(['message' => 'Logged out'], 200);
+        return $this->success(null, 'Logged out successfully');
     }
 }
-
