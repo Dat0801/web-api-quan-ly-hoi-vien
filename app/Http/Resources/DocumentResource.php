@@ -3,9 +3,11 @@
 namespace App\Http\Resources;
 
 use Illuminate\Http\Resources\Json\JsonResource;
+use App\Traits\HasPaginatedResource;
 
 class DocumentResource extends JsonResource
 {
+    use HasPaginatedResource; 
     /**
      * Transform the resource into an array.
      *

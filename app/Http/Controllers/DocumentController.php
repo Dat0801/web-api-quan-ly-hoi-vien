@@ -20,7 +20,7 @@ class DocumentController extends Controller
         $this->documentService = $documentService;
     }
 
-    public function index(Request $request): AnonymousResourceCollection
+    public function index(Request $request): JsonResponse
     {
         $documents = $this->documentService->getDocuments($request);
         return $this->success(DocumentResource::collection($documents), 'Lấy danh sách tài liệu thành công.');

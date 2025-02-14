@@ -3,9 +3,11 @@
 namespace App\Http\Resources;
 
 use Illuminate\Http\Resources\Json\JsonResource;
+use App\Traits\HasPaginatedResource;
 
 class RoleResource extends JsonResource
 {
+    use HasPaginatedResource; 
     public function toArray($request)
     {
         return [

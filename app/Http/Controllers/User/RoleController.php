@@ -24,7 +24,7 @@ class RoleController extends Controller
     public function index(Request $request): JsonResponse
     {
         $roles = $this->roleService->getAllRoles($request->get('search'));
-        return $this->success(RoleResource::collection($roles));
+        return $this->success(RoleResource::collection($roles), "Lấy danh sách vai trò thành công");
     }
 
     public function store(StoreRoleRequest $request): JsonResponse

@@ -4,9 +4,11 @@ namespace App\Http\Resources;
 
 use Illuminate\Http\Resources\Json\JsonResource;
 use Carbon\Carbon;
+use App\Traits\HasPaginatedResource;
 
 class UserResource extends JsonResource
 {
+    use HasPaginatedResource; 
     /**
      * Transform the resource into an array.
      *

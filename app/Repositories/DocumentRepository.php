@@ -17,6 +17,6 @@ class DocumentRepository extends BaseRepository implements DocumentRepositoryInt
         return Document::query()
             ->when($search, fn($query) => $query->where('file_name', 'like', "%$search%"))
             ->when($fileExtension, fn($query) => $query->where('file_extension', $fileExtension))
-            ->get();
+            ->paginate(10);
     }
 }

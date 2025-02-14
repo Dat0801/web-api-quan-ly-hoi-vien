@@ -12,11 +12,11 @@ class RoleRepository extends BaseRepository implements RoleRepositoryInterface
         parent::__construct($model);
     }
 
-    public function getAllRoles($filters)
+    public function getAllRoles(string $filter = null)
     {
-        return $this->model->with('permissions')
-            ->when(isset($filters['search']), function ($query) use ($filters) {
-                return $query->where('role_name', 'like', '%' . $filters['search'] . '%');
+        return $this->model
+            ->when(!empty($filter), function ($query) use ($filter) {
+                $query->where('role_name', 'like', '%' . $filter . '%');
             })
             ->paginate(10);
     }
