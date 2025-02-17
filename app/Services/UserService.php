@@ -25,6 +25,22 @@ class UserService
 
     public function createUser(array $data)
     {
+        $fieldMapping = [
+            'roleId' => 'role_id',
+            'phoneNumber' => 'phone_number'
+        ];
+
+        foreach ($fieldMapping as $old => $new) {
+            if (isset($data[$old])) {
+                $data[$new] = $data[$old];
+                unset($data[$old]);
+            }
+        }
+
+        if (isset($data['status'])) {
+            $data['status'] = filter_var($data['status'], FILTER_VALIDATE_BOOLEAN);
+        }
+
         if (!empty($data['password'])) {
             $data['password'] = bcrypt($data['password']);
         }
@@ -35,7 +51,7 @@ class UserService
             $data['avatar'] = $file->storeAs('avatars', $uniqueFileName, 'public');
         }
 
-        return $this->userRepo->create($data); 
+        return $this->userRepo->create($data);
     }
 
     public function updateUser(int $id, array $data)
@@ -58,17 +74,17 @@ class UserService
             $data['avatar'] = $file->storeAs('avatars', $uniqueFileName, 'public');
         }
 
-        return $this->userRepo->update($id, $data); 
+        return $this->userRepo->update($id, $data);
     }
 
     public function deleteUser(int $id)
     {
         $user = $this->userRepo->findById($id);
-        
+
         if ($user->avatar) {
             Storage::disk('public')->delete($user->avatar);
         }
 
-        return $this->userRepo->delete($id); 
+        return $this->userRepo->delete($id);
     }
 }

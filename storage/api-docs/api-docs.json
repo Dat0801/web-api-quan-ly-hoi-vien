@@ -1,0 +1,498 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "Laravel API Documentation",
+        "description": "API documentation using Swagger",
+        "version": "1.0"
+    },
+    "paths": {
+        "/api/login": {
+            "post": {
+                "tags": [
+                    "Authentication"
+                ],
+                "summary": "Đăng nhập và lấy token",
+                "operationId": "a3b306d14572d1f4bd6c064b3233e7b8",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "email",
+                                    "password"
+                                ],
+                                "properties": {
+                                    "email": {
+                                        "type": "string",
+                                        "format": "email",
+                                        "example": "nguyenbin394@gmail.com"
+                                    },
+                                    "password": {
+                                        "type": "string",
+                                        "format": "password",
+                                        "example": "password"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Đăng nhập thành công",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "token": {
+                                            "type": "string",
+                                            "example": "1|asdhjkashdkjashdkjashdkj"
+                                        },
+                                        "expiresAt": {
+                                            "type": "string",
+                                            "example": "2025-02-17 14:00:00"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Unauthorized"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/logout": {
+            "post": {
+                "tags": [
+                    "Authentication"
+                ],
+                "summary": "Đăng xuất",
+                "operationId": "fe8f3429cd6979b3b4517e186505f9f9",
+                "responses": {
+                    "200": {
+                        "description": "Đăng xuất thành công",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Logged out successfully"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/users": {
+            "get": {
+                "tags": [
+                    "Users"
+                ],
+                "summary": "Lấy danh sách người dùng",
+                "operationId": "1298ff976b08e96984349cf763e79dfd",
+                "responses": {
+                    "200": {
+                        "description": "Danh sách người dùng",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/User"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Users"
+                ],
+                "summary": "Tạo tài khoản",
+                "operationId": "e9ede2c3cb88b7de01edb1fa63509e73",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "multipart/form-data": {
+                            "schema": {
+                                "$ref": "#/components/schemas/StoreUserRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Tài khoản đã tạo",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/User"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/users/{id}": {
+            "get": {
+                "tags": [
+                    "Users"
+                ],
+                "summary": "Lấy thông tin tài khoản",
+                "operationId": "436681bad36a725a7e6f20563f66d57b",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Thông tin tài khoản",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/User"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "put": {
+                "tags": [
+                    "Users"
+                ],
+                "summary": "Cập nhật tài khoản",
+                "operationId": "cc620aa9b1fccfa8b3c334edfdb52b48",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "$ref": "#/components/schemas/StoreUserRequest"
+                },
+                "responses": {
+                    "200": {
+                        "description": "Tài khoản đã cập nhật",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/User"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Users"
+                ],
+                "summary": "Xóa tài khoản",
+                "operationId": "b36f89d153089cb23ffaf97beb049ea9",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "Tài khoản đã xóa"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        }
+    },
+    "components": {
+        "schemas": {
+            "StoreUserRequest": {
+                "required": [
+                    "name",
+                    "email",
+                    "password",
+                    "passwordConfirmation",
+                    "phoneNumber",
+                    "roleId",
+                    "status"
+                ],
+                "properties": {
+                    "name": {
+                        "type": "string",
+                        "example": "Thành Đạt"
+                    },
+                    "email": {
+                        "type": "string",
+                        "format": "email",
+                        "example": "thanhdat@example.com"
+                    },
+                    "password": {
+                        "type": "string",
+                        "format": "password",
+                        "example": "password123"
+                    },
+                    "passwordConfirmation": {
+                        "type": "string",
+                        "format": "password",
+                        "example": "password123"
+                    },
+                    "phoneNumber": {
+                        "type": "string",
+                        "example": "0399839848",
+                        "nullable": true
+                    },
+                    "roleId": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "status": {
+                        "type": "boolean",
+                        "example": true
+                    },
+                    "avatar": {
+                        "type": "file"
+                    }
+                },
+                "type": "object"
+            },
+            "UpdateUserRequest": {
+                "properties": {
+                    "phone_number": {
+                        "type": "string",
+                        "example": "0123456789",
+                        "nullable": true
+                    },
+                    "role_id": {
+                        "type": "integer",
+                        "example": 2
+                    },
+                    "status": {
+                        "type": "boolean",
+                        "example": true
+                    },
+                    "avatar": {
+                        "type": "string",
+                        "example": "avatar.jpg",
+                        "nullable": true
+                    },
+                    "password": {
+                        "type": "string",
+                        "format": "password",
+                        "example": "newpassword123",
+                        "nullable": true
+                    }
+                },
+                "type": "object"
+            },
+            "PermissionResource": {
+                "title": "Permission Resource",
+                "description": "Thông tin quyền",
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "name": {
+                        "type": "string",
+                        "example": "Xem người dùng"
+                    }
+                },
+                "type": "object"
+            },
+            "RoleResource": {
+                "title": "Role Resource",
+                "description": "Thông tin vai trò",
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "roleCode": {
+                        "type": "integer",
+                        "example": 2
+                    },
+                    "roleName": {
+                        "type": "string",
+                        "example": "Quản trị viên"
+                    },
+                    "permissions": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/PermissionResource"
+                        }
+                    }
+                },
+                "type": "object"
+            },
+            "User": {
+                "title": "User",
+                "description": "Thông tin người dùng",
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "name": {
+                        "type": "string",
+                        "example": "Nguyễn Văn A"
+                    },
+                    "email": {
+                        "type": "string",
+                        "format": "email",
+                        "example": "user@example.com"
+                    },
+                    "phoneNumber": {
+                        "type": "string",
+                        "example": "0123456789"
+                    },
+                    "status": {
+                        "type": "boolean",
+                        "example": true
+                    },
+                    "avatar": {
+                        "type": "string",
+                        "example": "https://example.com/avatar.jpg",
+                        "nullable": true
+                    },
+                    "lastLogin": {
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2024-02-17 12:30:45",
+                        "nullable": true
+                    },
+                    "role": {
+                        "properties": {
+                            "id": {
+                                "type": "integer",
+                                "example": 2
+                            },
+                            "roleCode": {
+                                "type": "string",
+                                "example": "USER001"
+                            },
+                            "roleName": {
+                                "type": "string",
+                                "example": "User"
+                            }
+                        },
+                        "type": "object"
+                    }
+                },
+                "type": "object"
+            },
+            "Role": {
+                "title": "Vai trò người dùng",
+                "description": "Model Role",
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "role_id": {
+                        "type": "integer",
+                        "example": 2
+                    },
+                    "role_name": {
+                        "type": "string",
+                        "example": "Admin"
+                    }
+                },
+                "type": "object"
+            }
+        },
+        "securitySchemes": {
+            "bearerAuth": {
+                "type": "apiKey",
+                "description": "Enter token in format (Bearer <token>)",
+                "name": "Authorization",
+                "in": "header"
+            }
+        }
+    },
+    "tags": [
+        {
+            "name": "Authentication",
+            "description": "API xác thực người dùng"
+        },
+        {
+            "name": "Users",
+            "description": "Quản lý tài khoản người dùng"
+        }
+    ],
+    "security": [
+        {
+            "bearerAuth": []
+        }
+    ]
+}

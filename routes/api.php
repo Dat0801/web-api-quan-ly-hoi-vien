@@ -19,6 +19,8 @@ use App\Http\Controllers\User\RoleController;
 |
 */
 
+
+
 Route::post('/login', [AuthController::class, 'login'])->name('login');
 
 Route::middleware(['auth:sanctum', 'token.expiration'])->group(function () {
