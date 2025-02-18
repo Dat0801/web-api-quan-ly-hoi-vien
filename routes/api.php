@@ -39,9 +39,9 @@ Route::middleware(['auth:sanctum', 'token.expiration'])->group(function () {
     Route::prefix('users')->group(function () {
         Route::get('/', [AccountController::class, 'index']); 
         Route::post('/', [AccountController::class, 'store']); 
-        Route::get('/{account}', [AccountController::class, 'show']); 
-        Route::put('/{account}', [AccountController::class, 'update']); 
-        Route::delete('/{account}', [AccountController::class, 'destroy']); 
+        Route::get('/{id}', [AccountController::class, 'show']); 
+        Route::put('/{id}', [AccountController::class, 'update']); 
+        Route::delete('/{id}', [AccountController::class, 'destroy']); 
     });
 
     Route::prefix('roles')->group(function () {

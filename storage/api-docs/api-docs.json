@@ -143,7 +143,7 @@
                 "tags": [
                     "Users"
                 ],
-                "summary": "Tạo tài khoản",
+                "summary": "Tạo mới người dùng",
                 "operationId": "e9ede2c3cb88b7de01edb1fa63509e73",
                 "requestBody": {
                     "required": true,
@@ -157,7 +157,7 @@
                 },
                 "responses": {
                     "201": {
-                        "description": "Tài khoản đã tạo",
+                        "description": "Người dùng đã tạo",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -179,7 +179,7 @@
                 "tags": [
                     "Users"
                 ],
-                "summary": "Lấy thông tin tài khoản",
+                "summary": "Lấy thông tin người dùng",
                 "operationId": "436681bad36a725a7e6f20563f66d57b",
                 "parameters": [
                     {
@@ -193,7 +193,7 @@
                 ],
                 "responses": {
                     "200": {
-                        "description": "Thông tin tài khoản",
+                        "description": "Thông tin người dùng",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -209,12 +209,12 @@
                     }
                 ]
             },
-            "put": {
+            "post": {
                 "tags": [
                     "Users"
                 ],
-                "summary": "Cập nhật tài khoản",
-                "operationId": "cc620aa9b1fccfa8b3c334edfdb52b48",
+                "summary": "Cập nhật thông tin người dùng (dùng POST với _method=PUT)",
+                "operationId": "5ae5fdd4a444b02ee9827567dc7af683",
                 "parameters": [
                     {
                         "name": "id",
@@ -226,11 +226,18 @@
                     }
                 ],
                 "requestBody": {
-                    "$ref": "#/components/schemas/StoreUserRequest"
+                    "required": true,
+                    "content": {
+                        "multipart/form-data": {
+                            "schema": {
+                                "$ref": "#/components/schemas/UpdateUserRequest"
+                            }
+                        }
+                    }
                 },
                 "responses": {
                     "200": {
-                        "description": "Tài khoản đã cập nhật",
+                        "description": "Người dùng đã cập nhật",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -250,7 +257,7 @@
                 "tags": [
                     "Users"
                 ],
-                "summary": "Xóa tài khoản",
+                "summary": "Xóa người dùng",
                 "operationId": "b36f89d153089cb23ffaf97beb049ea9",
                 "parameters": [
                     {
@@ -264,7 +271,7 @@
                 ],
                 "responses": {
                     "204": {
-                        "description": "Tài khoản đã xóa"
+                        "description": "Người dùng đã xóa"
                     }
                 },
                 "security": [
@@ -278,6 +285,8 @@
     "components": {
         "schemas": {
             "StoreUserRequest": {
+                "title": "Store User Request",
+                "description": "Yêu cầu tạo mới người dùng",
                 "required": [
                     "name",
                     "email",
@@ -289,68 +298,98 @@
                 ],
                 "properties": {
                     "name": {
+                        "description": "Tên đầy đủ của người dùng.",
                         "type": "string",
                         "example": "Thành Đạt"
                     },
                     "email": {
+                        "description": "Địa chỉ email của người dùng.",
                         "type": "string",
                         "format": "email",
                         "example": "thanhdat@example.com"
                     },
+                    "phoneNumber": {
+                        "description": "Số điện thoại của người dùng.",
+                        "type": "string",
+                        "example": "0399839848"
+                    },
+                    "avatar": {
+                        "description": "Ảnh đại diện của người dùng (file ảnh).",
+                        "type": "file"
+                    },
+                    "roleId": {
+                        "description": "ID vai trò của người dùng.",
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "status": {
+                        "description": "Trạng thái tài khoản (true: hoạt động, false: bị khóa).",
+                        "type": "boolean",
+                        "example": true
+                    },
                     "password": {
+                        "description": "Mật khẩu của người dùng, tối thiểu 8 ký tự.",
                         "type": "string",
                         "format": "password",
                         "example": "password123"
                     },
                     "passwordConfirmation": {
+                        "description": "Xác nhận mật khẩu của người dùng.",
                         "type": "string",
                         "format": "password",
                         "example": "password123"
-                    },
-                    "phoneNumber": {
-                        "type": "string",
-                        "example": "0399839848",
-                        "nullable": true
-                    },
-                    "roleId": {
-                        "type": "integer",
-                        "example": 1
-                    },
-                    "status": {
-                        "type": "boolean",
-                        "example": true
-                    },
-                    "avatar": {
-                        "type": "file"
                     }
                 },
                 "type": "object"
             },
             "UpdateUserRequest": {
+                "title": "Update User Request",
+                "description": "Yêu cầu cập nhật thông tin người dùng",
+                "required": [
+                    "_method",
+                    "password",
+                    "passwordConfirmation",
+                    "phoneNumber",
+                    "roleId",
+                    "status"
+                ],
                 "properties": {
-                    "phone_number": {
+                    "_method": {
+                        "description": "Giả lập phương thức PUT để cập nhật tài nguyên.",
                         "type": "string",
-                        "example": "0123456789",
-                        "nullable": true
+                        "example": "PUT"
                     },
-                    "role_id": {
+                    "phoneNumber": {
+                        "description": "Số điện thoại của người dùng.",
+                        "type": "string",
+                        "example": "0123456789"
+                    },
+                    "avatar": {
+                        "description": "Ảnh đại diện của người dùng (file ảnh).",
+                        "type": "string",
+                        "format": "binary"
+                    },
+                    "roleId": {
+                        "description": "ID của vai trò mới của người dùng.",
                         "type": "integer",
                         "example": 2
                     },
                     "status": {
+                        "description": "Trạng thái tài khoản (true: hoạt động, false: bị khóa).",
                         "type": "boolean",
                         "example": true
                     },
-                    "avatar": {
-                        "type": "string",
-                        "example": "avatar.jpg",
-                        "nullable": true
-                    },
                     "password": {
+                        "description": "Mật khẩu mới, tối thiểu 8 ký tự, cần nhập lại để xác nhận.",
                         "type": "string",
                         "format": "password",
-                        "example": "newpassword123",
-                        "nullable": true
+                        "example": "newpassword123"
+                    },
+                    "passwordConfirmation": {
+                        "description": "Xác nhận mật khẩu mới của người dùng.",
+                        "type": "string",
+                        "format": "password",
+                        "example": "newpassword123"
                     }
                 },
                 "type": "object"
@@ -400,53 +439,64 @@
                 "description": "Thông tin người dùng",
                 "properties": {
                     "id": {
+                        "description": "ID của người dùng.",
                         "type": "integer",
                         "example": 1
                     },
                     "name": {
+                        "description": "Tên đầy đủ của người dùng.",
                         "type": "string",
                         "example": "Nguyễn Văn A"
                     },
                     "email": {
+                        "description": "Địa chỉ email của người dùng.",
                         "type": "string",
                         "format": "email",
                         "example": "user@example.com"
                     },
                     "phoneNumber": {
+                        "description": "Số điện thoại của người dùng.",
                         "type": "string",
                         "example": "0123456789"
                     },
-                    "status": {
-                        "type": "boolean",
-                        "example": true
-                    },
-                    "avatar": {
-                        "type": "string",
-                        "example": "https://example.com/avatar.jpg",
-                        "nullable": true
-                    },
-                    "lastLogin": {
-                        "type": "string",
-                        "format": "date-time",
-                        "example": "2024-02-17 12:30:45",
-                        "nullable": true
-                    },
                     "role": {
+                        "description": "Thông tin vai trò của người dùng",
                         "properties": {
                             "id": {
+                                "description": "ID vai trò của người dùng.",
                                 "type": "integer",
                                 "example": 2
                             },
                             "roleCode": {
+                                "description": "Mã vai trò của người dùng.",
                                 "type": "string",
                                 "example": "USER001"
                             },
                             "roleName": {
+                                "description": "Tên vai trò của người dùng.",
                                 "type": "string",
                                 "example": "User"
                             }
                         },
                         "type": "object"
+                    },
+                    "status": {
+                        "description": "Trạng thái tài khoản của người dùng (true: hoạt động, false: bị khóa).",
+                        "type": "boolean",
+                        "example": true
+                    },
+                    "avatar": {
+                        "description": "Đường dẫn ảnh đại diện của người dùng.",
+                        "type": "string",
+                        "example": "https://example.com/avatar.jpg",
+                        "nullable": true
+                    },
+                    "lastLogin": {
+                        "description": "Thời gian đăng nhập lần cuối của người dùng.",
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2024-02-17 12:30:45",
+                        "nullable": true
                     }
                 },
                 "type": "object"
@@ -487,7 +537,7 @@
         },
         {
             "name": "Users",
-            "description": "Quản lý tài khoản người dùng"
+            "description": "Quản lý người dùng"
         }
     ],
     "security": [

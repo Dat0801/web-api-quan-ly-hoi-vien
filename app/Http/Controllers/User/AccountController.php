@@ -13,7 +13,7 @@ use App\Traits\ApiResponse;
 /**
  * @OA\Tag(
  *     name="Users",
- *     description="Quản lý tài khoản người dùng"
+ *     description="Quản lý người dùng"
  * )
  */
 
@@ -45,13 +45,13 @@ class AccountController extends Controller
             $request->get('search')
         );
 
-        return $this->success(UserResource::collection($users), 'Lấy danh sách tài khoản thành công.');
+        return $this->success(UserResource::collection($users), 'Lấy danh sách người dùng thành công.');
     }
 
     /**
      * @OA\Post(
      *     path="/api/users",
-     *     summary="Tạo tài khoản",
+     *     summary="Tạo mới người dùng",
      *     tags={"Users"},
      *     security={{"bearerAuth": {}}},
      *     @OA\RequestBody(
@@ -63,61 +63,72 @@ class AccountController extends Controller
      *             )
      *         )
      *     ),
-     *     @OA\Response(response=201, description="Tài khoản đã tạo", @OA\JsonContent(ref="#/components/schemas/User"))
+     *     @OA\Response(response=201, description="Người dùng đã tạo", @OA\JsonContent(ref="#/components/schemas/User"))
      * )
      */
 
     public function store(StoreUserRequest $request)
     {
         $user = $this->userService->createUser($request->validated());
-        return $this->success(new UserResource($user), 'Tài khoản đã được tạo thành công.', Response::HTTP_CREATED);
+        return $this->success(new UserResource($user), 'Người dùng đã được tạo thành công.', Response::HTTP_CREATED);
     }
 
     /**
      * @OA\Get(
      *     path="/api/users/{id}",
-     *     summary="Lấy thông tin tài khoản",
+     *     summary="Lấy thông tin người dùng",
      *     tags={"Users"},
      *     security={{"bearerAuth": {}}},
      *     @OA\Parameter(name="id", in="path", required=true, @OA\Schema(type="integer")),
-     *     @OA\Response(response=200, description="Thông tin tài khoản", @OA\JsonContent(ref="#/components/schemas/User"))
+     *     @OA\Response(response=200, description="Thông tin người dùng", @OA\JsonContent(ref="#/components/schemas/User"))
      * )
      */
-    public function show(User $account)
+    public function show($id)
     {
-        return $this->success(new UserResource($account), 'Lấy thông tin tài khoản thành công.');
+        $account = User::findOrFail($id);  
+        return $this->success(new UserResource($account), 'Lấy thông tin người dùng thành công.');
     }
 
     /**
-     * @OA\Put(
+     * @OA\POST(
      *     path="/api/users/{id}",
-     *     summary="Cập nhật tài khoản",
+     *     summary="Cập nhật thông tin người dùng (dùng POST với _method=PUT)",
      *     tags={"Users"},
      *     security={{"bearerAuth": {}}},
      *     @OA\Parameter(name="id", in="path", required=true, @OA\Schema(type="integer")),
-     *     @OA\RequestBody(ref="#/components/schemas/StoreUserRequest"),
-     *     @OA\Response(response=200, description="Tài khoản đã cập nhật", @OA\JsonContent(ref="#/components/schemas/User"))
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\MediaType(
+     *             mediaType="multipart/form-data",
+     *             @OA\Schema(
+     *                 ref="#/components/schemas/UpdateUserRequest", 
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(response=200, description="Người dùng đã cập nhật", @OA\JsonContent(ref="#/components/schemas/User"))
      * )
      */
-    public function update(UpdateUserRequest $request, User $account)
+
+    public function update(UpdateUserRequest $request, $id)
     {
-        $this->userService->updateUser($account->id, $request->validated());
-        return $this->success(new UserResource($account), 'Tài khoản đã được cập nhật thành công.');
+        $account = User::findOrFail($id);
+        $user = $this->userService->updateUser($account->id, $request->validated());
+        return $this->success(new UserResource($user), 'Người dùng đã được cập nhật thành công.');
     }
 
     /**
      * @OA\Delete(
      *     path="/api/users/{id}",
-     *     summary="Xóa tài khoản",
+     *     summary="Xóa người dùng",
      *     tags={"Users"},
      *     security={{"bearerAuth": {}}},
      *     @OA\Parameter(name="id", in="path", required=true, @OA\Schema(type="integer")),
-     *     @OA\Response(response=204, description="Tài khoản đã xóa")
+     *     @OA\Response(response=204, description="Người dùng đã xóa")
      * )
      */
-    public function destroy(User $account)
+    public function destroy($id)
     {
-        $this->userService->deleteUser($account->id);
-        return $this->success(null, 'Tài khoản đã được xóa thành công.');
+        $this->userService->deleteUser($id);
+        return $this->success(null, 'Người dùng đã được xóa thành công.');
     }
 }
