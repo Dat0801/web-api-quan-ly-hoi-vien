@@ -13,7 +13,6 @@ class Permission extends Model
         'group_name',
     ];
 
-    // Quan hệ nhiều-nhiều với Role
     public function roles()
     {
         return $this->belongsToMany(Role::class, 'role_permissions');

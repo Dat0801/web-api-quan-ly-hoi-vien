@@ -38,7 +38,7 @@ class UserResource extends JsonResource
             'phoneNumber' => $this->phone_number,
             'role' => new RoleResource($this->role),
             'status' => $this->status,
-            'avatar' => $this->avatar ? asset('storage/' . $this->avatar) : null,
+            'avatar' => $this->avatar ?? null,
             'lastLogin' => $this->last_login ? Carbon::parse($this->last_login)->format('Y-m-d H:i:s') : null,
         ];
     }

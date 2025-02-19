@@ -7,16 +7,6 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
-/**
- * @OA\Schema(
- *     schema="Role",
- *     title="Vai trò người dùng",
- *     description="Model Role",
- *     @OA\Property(property="id", type="integer", example=1),
- *     @OA\Property(property="role_id", type="integer", example=2),
- *     @OA\Property(property="role_name", type="string", example="Admin")
- * )
- */
 class Role extends Model
 {
     use HasFactory;

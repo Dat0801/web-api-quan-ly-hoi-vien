@@ -33,7 +33,7 @@ Route::middleware(['auth:sanctum', 'token.expiration'])->group(function () {
         Route::get('/', [DocumentController::class, 'index']);
         Route::post('/', [DocumentController::class, 'store']);
         Route::delete('/{id}', [DocumentController::class, 'destroy']);
-        Route::get('/download/{id}', [DocumentController::class, 'download']);
+        Route::get('{id}/download', [DocumentController::class, 'download']);
     });
 
     Route::prefix('users')->group(function () {

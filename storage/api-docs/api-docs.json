@@ -1,7 +1,7 @@
 {
     "openapi": "3.0.0",
     "info": {
-        "title": "Laravel API Documentation",
+        "title": "Membership Management API Documentation",
         "description": "API documentation using Swagger",
         "version": "1.0"
     },
@@ -102,6 +102,138 @@
                                 }
                             }
                         }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/documents": {
+            "get": {
+                "tags": [
+                    "Documents"
+                ],
+                "summary": "Lấy danh sách tài liệu",
+                "operationId": "479e53af7d4820aecb8f9534fdbe21aa",
+                "responses": {
+                    "200": {
+                        "description": "Danh sách tài liệu",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/Document"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Documents"
+                ],
+                "summary": "Thêm mới tài liệu",
+                "operationId": "9b247d60e8834d470666fba8e773edb4",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "multipart/form-data": {
+                            "schema": {
+                                "$ref": "#/components/schemas/StoreDocumentRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Tài liệu đã được thêm",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Document"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/documents/{id}/download": {
+            "get": {
+                "tags": [
+                    "Documents"
+                ],
+                "summary": "Tải xuống tài liệu",
+                "operationId": "9c3894d9d7b13268e679345d76550898",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Tải xuống tệp",
+                        "content": {
+                            "application/octet-stream": {
+                                "schema": {
+                                    "type": "string",
+                                    "format": "binary"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Tệp không tồn tại"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/documents/{id}": {
+            "delete": {
+                "tags": [
+                    "Documents"
+                ],
+                "summary": "Xóa tài liệu",
+                "operationId": "889c107c27dc6b118dee932d1760f574",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "Tài liệu đã được xóa"
                     }
                 },
                 "security": [
@@ -280,10 +412,226 @@
                     }
                 ]
             }
+        },
+        "/api/roles": {
+            "get": {
+                "tags": [
+                    "Roles"
+                ],
+                "summary": "Lấy danh sách vai trò",
+                "operationId": "1cede8c290961f221762ccb8168b6324",
+                "responses": {
+                    "200": {
+                        "description": "Danh sách vai trò",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/Role"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Roles"
+                ],
+                "summary": "Thêm mới vai trò",
+                "operationId": "ead47d25d175b75a76b7c08c4a7f9991",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/StoreRoleRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Vai trò đã được tạo",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Role"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/roles/{id}": {
+            "get": {
+                "tags": [
+                    "Roles"
+                ],
+                "summary": "Lấy thông tin vai trò",
+                "operationId": "dcc45baf65eb1bc7b2c1d2f57e4d776b",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Thông tin vai trò",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Role"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "put": {
+                "tags": [
+                    "Roles"
+                ],
+                "summary": "Cập nhật vai trò",
+                "operationId": "181a6d296455dce3942cdadf3b008d2a",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/UpdateRoleRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Cập nhật vai trò thành công",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Role"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Roles"
+                ],
+                "summary": "Xóa vai trò",
+                "operationId": "edec5e4c3d6e30a3527031e5fb0c267c",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "Xóa vai trò thành công"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
         }
     },
     "components": {
         "schemas": {
+            "StoreDocumentRequest": {
+                "title": "Store Document Request",
+                "description": "Yêu cầu lưu tài liệu mới",
+                "required": [
+                    "document"
+                ],
+                "properties": {
+                    "document": {
+                        "description": "Tệp tài liệu cần tải lên (PDF, DOC, DOCX, XLSX, XLS, PNG, JPG)",
+                        "type": "string",
+                        "format": "binary",
+                        "example": "file.pdf"
+                    }
+                },
+                "type": "object"
+            },
+            "StoreRoleRequest": {
+                "title": "Store Role Request",
+                "description": "Yêu cầu tạo mới vai trò",
+                "required": [
+                    "roleName",
+                    "roleCode",
+                    "permissions"
+                ],
+                "properties": {
+                    "roleName": {
+                        "description": "Tên vai trò.",
+                        "type": "string",
+                        "example": "Quản trị viên"
+                    },
+                    "roleCode": {
+                        "description": "Mã vai trò duy nhất.",
+                        "type": "string",
+                        "example": "ADMIN001"
+                    },
+                    "permissions": {
+                        "description": "Danh sách quyền được cấp cho vai trò.",
+                        "type": "array",
+                        "items": {
+                            "type": "string",
+                            "example": "1.1"
+                        }
+                    }
+                },
+                "type": "object"
+            },
             "StoreUserRequest": {
                 "title": "Store User Request",
                 "description": "Yêu cầu tạo mới người dùng",
@@ -342,6 +690,26 @@
                 },
                 "type": "object"
             },
+            "UpdateRoleRequest": {
+                "title": "Update Role Request",
+                "description": "Yêu cầu cập nhật vai trò",
+                "properties": {
+                    "roleName": {
+                        "description": "Tên vai trò.",
+                        "type": "string",
+                        "example": "Quản trị viên"
+                    },
+                    "permissions": {
+                        "description": "Danh sách quyền được cấp cho vai trò.",
+                        "type": "array",
+                        "items": {
+                            "type": "string",
+                            "example": "1.1"
+                        }
+                    }
+                },
+                "type": "object"
+            },
             "UpdateUserRequest": {
                 "title": "Update User Request",
                 "description": "Yêu cầu cập nhật thông tin người dùng",
@@ -394,41 +762,83 @@
                 },
                 "type": "object"
             },
-            "PermissionResource": {
-                "title": "Permission Resource",
-                "description": "Thông tin quyền",
+            "Document": {
+                "title": "Document",
+                "description": "Chi tiết tài liệu",
                 "properties": {
                     "id": {
                         "type": "integer",
                         "example": 1
                     },
+                    "fileName": {
+                        "type": "string",
+                        "example": "document.pdf"
+                    },
+                    "fileExtension": {
+                        "type": "string",
+                        "example": "pdf"
+                    },
+                    "filePath": {
+                        "type": "string",
+                        "example": "documents/document.pdf"
+                    }
+                },
+                "type": "object"
+            },
+            "Permission": {
+                "title": "Permission",
+                "description": "Thông tin quyền",
+                "properties": {
+                    "id": {
+                        "description": "ID của quyền.",
+                        "type": "integer",
+                        "example": 1
+                    },
                     "name": {
+                        "description": "Tên của quyền.",
                         "type": "string",
                         "example": "Xem người dùng"
                     }
                 },
                 "type": "object"
             },
-            "RoleResource": {
-                "title": "Role Resource",
+            "Role": {
+                "title": "Role",
                 "description": "Thông tin vai trò",
                 "properties": {
                     "id": {
+                        "description": "ID của vai trò.",
                         "type": "integer",
                         "example": 1
                     },
                     "roleCode": {
-                        "type": "integer",
-                        "example": 2
+                        "description": "Mã của vai trò.",
+                        "type": "string",
+                        "example": "ADMIN001"
                     },
                     "roleName": {
+                        "description": "Tên của vai trò.",
                         "type": "string",
                         "example": "Quản trị viên"
                     },
                     "permissions": {
+                        "description": "Danh sách quyền của vai trò",
                         "type": "array",
                         "items": {
-                            "$ref": "#/components/schemas/PermissionResource"
+                            "properties": {
+                                "groupName": {
+                                    "description": "Tên nhóm quyền.",
+                                    "type": "string",
+                                    "example": "Quản lý người dùng"
+                                },
+                                "permissions": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/Permission"
+                                    }
+                                }
+                            },
+                            "type": "object"
                         }
                     }
                 },
@@ -500,25 +910,6 @@
                     }
                 },
                 "type": "object"
-            },
-            "Role": {
-                "title": "Vai trò người dùng",
-                "description": "Model Role",
-                "properties": {
-                    "id": {
-                        "type": "integer",
-                        "example": 1
-                    },
-                    "role_id": {
-                        "type": "integer",
-                        "example": 2
-                    },
-                    "role_name": {
-                        "type": "string",
-                        "example": "Admin"
-                    }
-                },
-                "type": "object"
             }
         },
         "securitySchemes": {
@@ -536,8 +927,16 @@
             "description": "API xác thực người dùng"
         },
         {
+            "name": "Documents",
+            "description": "Quản lý tài liệu"
+        },
+        {
             "name": "Users",
             "description": "Quản lý người dùng"
+        },
+        {
+            "name": "Roles",
+            "description": "Quản lý vai trò"
         }
     ],
     "security": [

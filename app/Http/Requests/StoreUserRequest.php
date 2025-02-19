@@ -29,8 +29,8 @@ class StoreUserRequest extends FormRequest
             'name' => 'required|string|max:255',
             'email' => 'required|email|unique:users,email',
             'password' => 'required|string|min:8|confirmed',
-            'phoneNumber' => 'required|string|max:15',
-            'roleId' => 'required|exists:roles,id',
+            'phone_number' => 'required|string|max:15',
+            'role_id' => 'required|exists:roles,id',
             'status' => 'required',
             'avatar' => 'nullable|image|mimes:jpg,jpeg,png,gif,svg|max:2048',
         ];
@@ -38,10 +38,22 @@ class StoreUserRequest extends FormRequest
 
     public function prepareForValidation()
     {
+        $data = [];
+    
         if ($this->has('passwordConfirmation')) {
-            $this->merge([
-                'password_confirmation' => $this->input('passwordConfirmation'),
-            ]);
+            $data['password_confirmation'] = $this->input('passwordConfirmation');
+        }
+    
+        if ($this->has('roleId')) {
+            $data['role_id'] = $this->input('roleId');
+        }
+    
+        if ($this->has('phoneNumber')) {
+            $data['phone_number'] = $this->input('phoneNumber');
+        }
+    
+        if (!empty($data)) {
+            $this->merge($data);
         }
     }
 }

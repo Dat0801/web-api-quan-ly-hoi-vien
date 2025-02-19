@@ -16,7 +16,6 @@ use App\Traits\ApiResponse;
  *     description="Quản lý người dùng"
  * )
  */
-
 class AccountController extends Controller
 {
     use ApiResponse;
@@ -66,7 +65,6 @@ class AccountController extends Controller
      *     @OA\Response(response=201, description="Người dùng đã tạo", @OA\JsonContent(ref="#/components/schemas/User"))
      * )
      */
-
     public function store(StoreUserRequest $request)
     {
         $user = $this->userService->createUser($request->validated());
@@ -85,7 +83,7 @@ class AccountController extends Controller
      */
     public function show($id)
     {
-        $account = User::findOrFail($id);  
+        $account = User::findOrFail($id);
         return $this->success(new UserResource($account), 'Lấy thông tin người dùng thành công.');
     }
 
@@ -108,7 +106,6 @@ class AccountController extends Controller
      *     @OA\Response(response=200, description="Người dùng đã cập nhật", @OA\JsonContent(ref="#/components/schemas/User"))
      * )
      */
-
     public function update(UpdateUserRequest $request, $id)
     {
         $account = User::findOrFail($id);

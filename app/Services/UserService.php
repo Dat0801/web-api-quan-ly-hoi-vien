@@ -3,6 +3,7 @@ namespace App\Services;
 
 use App\Interfaces\UserRepositoryInterface;
 use Illuminate\Support\Facades\Storage;
+use CloudinaryLabs\CloudinaryLaravel\Facades\Cloudinary;
 
 class UserService
 {
@@ -23,20 +24,9 @@ class UserService
         return $this->userRepo->findById($id);
     }
 
+
     public function createUser(array $data)
     {
-        $fieldMapping = [
-            'roleId' => 'role_id',
-            'phoneNumber' => 'phone_number'
-        ];
-
-        foreach ($fieldMapping as $old => $new) {
-            if (isset($data[$old])) {
-                $data[$new] = $data[$old];
-                unset($data[$old]);
-            }
-        }
-
         if (isset($data['status'])) {
             $data['status'] = filter_var($data['status'], FILTER_VALIDATE_BOOLEAN);
         }
@@ -47,12 +37,16 @@ class UserService
 
         if (!empty($data['avatar'])) {
             $file = $data['avatar'];
-            $uniqueFileName = uniqid() . '_' . $file->getClientOriginalName();
-            $data['avatar'] = $file->storeAs('avatars', $uniqueFileName, 'public');
+            $uploadedFile = Cloudinary::upload($file->getRealPath(), [
+                'folder' => 'user_avatars'
+            ])->getResponse();
+
+            $data['avatar'] = $uploadedFile['secure_url'] ?? null;
         }
 
         return $this->userRepo->create($data);
     }
+
 
     public function updateUser(int $id, array $data)
     {
@@ -66,12 +60,16 @@ class UserService
 
         if (!empty($data['avatar'])) {
             if ($user->avatar) {
-                Storage::disk('public')->delete($user->avatar);
+                $publicId = pathinfo(parse_url($user->avatar, PHP_URL_PATH), PATHINFO_FILENAME);
+                Cloudinary::destroy('user_avatars/' . $publicId);
             }
 
             $file = $data['avatar'];
-            $uniqueFileName = uniqid() . '_' . $file->getClientOriginalName();
-            $data['avatar'] = $file->storeAs('avatars', $uniqueFileName, 'public');
+            $uploadedFile = Cloudinary::upload($file->getRealPath(), [
+                'folder' => 'user_avatars' 
+            ])->getResponse(); 
+
+            $data['avatar'] = $uploadedFile['secure_url'] ?? null;
         }
 
         return $this->userRepo->update($id, $data);

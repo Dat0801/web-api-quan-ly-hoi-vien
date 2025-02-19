@@ -6,6 +6,21 @@ use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Http\Exceptions\HttpResponseException;
 
+/**
+ * @OA\Schema(
+ *     schema="StoreDocumentRequest",
+ *     title="Store Document Request",
+ *     description="Yêu cầu lưu tài liệu mới",
+ *     required={"document"},
+ *     @OA\Property(
+ *         property="document",
+ *         type="string",
+ *         format="binary",
+ *         description="Tệp tài liệu cần tải lên (PDF, DOC, DOCX, XLSX, XLS, PNG, JPG)",
+ *         example="file.pdf"
+ *     )
+ * )
+ */
 class StoreDocumentRequest extends FormRequest
 {
     /**

@@ -5,12 +5,45 @@ namespace App\Http\Requests;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Http\Exceptions\HttpResponseException;
+/**
+ * @OA\Schema(
+ *     schema="StoreRoleRequest",
+ *     title="Store Role Request",
+ *     required={"roleName", "roleCode", "permissions"},
+ *     description="Yêu cầu tạo mới vai trò",
+ *     @OA\Property(property="roleName", type="string", example="Quản trị viên", description="Tên vai trò."),
+ *     @OA\Property(property="roleCode", type="string", example="ADMIN001", description="Mã vai trò duy nhất."),
+ *     @OA\Property(
+ *         property="permissions",
+ *         type="array",
+ *         description="Danh sách quyền được cấp cho vai trò.",
+ *         @OA\Items(type="string", example="1.1")
+ *     )
+ * )
+ */
 
 class StoreRoleRequest extends FormRequest
 {
     public function authorize()
     {
         return true;
+    }
+
+    public function prepareForValidation()
+    {
+        $data = [];
+
+        if ($this->has('roleCode')) {
+            $data['role_id'] = $this->input('roleCode');
+        }
+
+        if ($this->has('roleName')) {
+            $data['role_name'] = $this->input('roleName');
+        }
+
+        if (!empty($data)) {
+            $this->merge($data);
+        }
     }
 
     public function rules()

@@ -6,11 +6,11 @@ use Illuminate\Http\Resources\Json\JsonResource;
 
 /**
  * @OA\Schema(
- *     schema="PermissionResource",
- *     title="Permission Resource",
+ *     schema="Permission",
+ *     title="Permission",
  *     description="Thông tin quyền",
- *     @OA\Property(property="id", type="integer", example=1),
- *     @OA\Property(property="name", type="string", example="Xem người dùng")
+ *     @OA\Property(property="id", type="integer", example=1, description="ID của quyền."),
+ *     @OA\Property(property="name", type="string", example="Xem người dùng", description="Tên của quyền.")
  * )
  */
 class PermissionResource extends JsonResource
@@ -23,4 +23,3 @@ class PermissionResource extends JsonResource
         ];
     }
 }
-
