@@ -12,7 +12,7 @@ class DocumentRepository extends BaseRepository implements DocumentRepositoryInt
         parent::__construct($model);
     }
     
-    public function getAllDocuments(?string $search, ?string $fileExtension)
+    public function getDocuments(?string $search, ?string $fileExtension)
     {
         return Document::query()
             ->when($search, fn($query) => $query->where('file_name', 'like', "%$search%"))

@@ -20,7 +20,7 @@ class DocumentService
         $search = $request->input('search');
         $fileExtension = $request->input('file_extension');
 
-        return $this->documentRepo->getAllDocuments($search, $fileExtension);
+        return $this->documentRepo->getDocuments($search, $fileExtension);
     }
 
     public function storeDocument(Request $request)

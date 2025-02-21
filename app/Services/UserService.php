@@ -14,9 +14,9 @@ class UserService
         $this->userRepo = $userRepo;
     }
 
-    public function getAllUsers($status, $roleId, $search)
+    public function getUsers($status, $roleId, $search)
     {
-        return $this->userRepo->getAllUsers($status, $roleId, $search);
+        return $this->userRepo->getUsers($status, $roleId, $search);
     }
 
     public function getUserById($id)

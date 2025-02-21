@@ -22,7 +22,7 @@
 ## 📂 Cài Đặt & Chạy Dự Án  
 ### 1️⃣ Clone Repository  
 ```bash  
-git clone https://github.com/Dat0801/back-end-web-quan-ly-hoi-vien.git
+git clone https://github.com/Dat0801/web-api-quan-ly-hoi-vien.git
 cd web-api-quan-ly-hoi-vien  
 ```
 ### 2️⃣ Cài Đặt Dependencies  

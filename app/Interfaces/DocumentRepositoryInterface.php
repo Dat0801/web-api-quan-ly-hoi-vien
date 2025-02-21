@@ -4,5 +4,5 @@ namespace App\Interfaces;
 
 interface DocumentRepositoryInterface extends BaseRepositoryInterface
 {
-    public function getAllDocuments(?string $search, ?string $fileExtension);
+    public function getDocuments(?string $search, ?string $fileExtension);
 }

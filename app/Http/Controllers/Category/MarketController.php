@@ -3,60 +3,156 @@
 namespace App\Http\Controllers\Category;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\StoreMarketRequest;
+use App\Http\Requests\UpdateMarketRequest;
+use App\Http\Resources\MarketResource;
+use App\Services\MarketService;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use App\Models\Market;
+use App\Traits\ApiResponse;
 
+/**
+ * @OA\Tag(
+ *     name="Markets",
+ *     description="Quản lý thị trường"
+ * )
+ */
 class MarketController extends Controller
 {
-    //
-    public function index(Request $request)
-    {
-        $search = $request->input('search');
-        $markets = Market::when($search, function ($query, $search) {
-            return $query->where('market_name', 'LIKE', '%' . $search . '%');
-        })->paginate(3);
+    use ApiResponse;
 
-        return view('category.market.index', compact('markets'));
+    protected $marketService;
+
+    public function __construct(MarketService $marketService)
+    {
+        $this->marketService = $marketService;
     }
 
-    public function create()
+    /**
+     * @OA\Get(
+     *     path="/api/markets",
+     *     summary="Lấy danh sách thị trường",
+     *     tags={"Markets"},
+     *     security={{"bearerAuth": {}}},
+     *     @OA\Parameter(
+     *         name="search",
+     *         in="query",
+     *         description="Tìm kiếm theo tên thị trường",
+     *         @OA\Schema(type="string")
+     *     ),
+     *     @OA\Parameter(
+     *         name="page",
+     *         in="query",
+     *         description="Số trang",
+     *         @OA\Schema(type="integer", default=1)
+     *     ),
+     *     @OA\Parameter(
+     *         name="per_page",
+     *         in="query",
+     *         description="Số lượng thị trường trên mỗi trang",
+     *         @OA\Schema(type="integer", default=10)
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Danh sách thị trường có phân trang",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="data", type="array", @OA\Items(ref="#/components/schemas/Market")),
+     *             @OA\Property(property="current_page", type="integer"),
+     *             @OA\Property(property="last_page", type="integer"),
+     *             @OA\Property(property="per_page", type="integer"),
+     *             @OA\Property(property="total", type="integer")
+     *         )
+     *     )
+     * )
+     */
+    public function index(Request $request): JsonResponse
     {
-        return view('category.market.create');
+        $markets = $this->marketService->getMarkets(
+            $request->get('search'),
+            $request->get('per_page', 10) 
+        );
+        return $this->success($markets, "Lấy danh sách thị trường thành công");
     }
 
-    public function store(Request $request)
+    /**
+     * @OA\Post(
+     *     path="/api/markets",
+     *     summary="Thêm mới thị trường",
+     *     tags={"Markets"},
+     *     security={{"bearerAuth": {}}},
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\MediaType(
+     *             mediaType="application/json",
+     *             @OA\Schema(ref="#/components/schemas/StoreMarketRequest")
+     *         )
+     *     ),
+     *     @OA\Response(response=201, description="Thị trường đã được tạo", @OA\JsonContent(ref="#/components/schemas/Market"))
+     * )
+     */
+    public function store(StoreMarketRequest $request): JsonResponse
     {
-        Market::create($request->all());
-        return redirect()->route('market.index')->with('success', 'Thêm thị trường thành công.');
+        $market = $this->marketService->createMarket($request->validated());
+        return $this->success(new MarketResource($market), 'Thêm thị trường thành công!', 201);
     }
 
-    public function show($id)
+    /**
+     * @OA\Get(
+     *     path="/api/markets/{id}",
+     *     summary="Lấy thông tin chi tiết thị trường",
+     *     tags={"Markets"},
+     *     security={{"bearerAuth": {}}},
+     *     @OA\Parameter(name="id", in="path", required=true, @OA\Schema(type="integer")),
+     *     @OA\Response(response=200, description="Thông tin thị trường", @OA\JsonContent(ref="#/components/schemas/Market")),
+     *     @OA\Response(response=404, description="Không tìm thấy thị trường")
+     * )
+     */
+    public function show($id): JsonResponse
     {
-        $market = Market::findOrFail($id);
-        return view('category.market.show', compact('market'));
+        $market = $this->marketService->getMarketById($id);
+        return $market ? $this->success(new MarketResource($market)) : $this->error('Thị trường không tồn tại!', 404);
     }
 
-    public function edit($id)
+    /**
+     * @OA\Put(
+     *     path="/api/markets/{id}",
+     *     summary="Cập nhật thông tin thị trường",
+     *     tags={"Markets"},
+     *     security={{"bearerAuth": {}}},
+     *     @OA\Parameter(name="id", in="path", required=true, @OA\Schema(type="integer")),
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\MediaType(
+     *             mediaType="application/json",
+     *             @OA\Schema(ref="#/components/schemas/UpdateMarketRequest")
+     *         )
+     *     ),
+     *     @OA\Response(response=200, description="Cập nhật thành công", @OA\JsonContent(ref="#/components/schemas/Market")),
+     *     @OA\Response(response=404, description="Không tìm thấy thị trường")
+     * )
+     */
+    public function update(UpdateMarketRequest $request, $id): JsonResponse
     {
-        $market = Market::findOrFail($id);
-        return view('category.market.edit', compact('market'));
+        $market = $this->marketService->updateMarket($id, $request->validated());
+        return $this->success(new MarketResource($market), 'Cập nhật thị trường thành công!');
     }
 
-    public function update(Request $request, $id)
+    /**
+     * @OA\Delete(
+     *     path="/api/markets/{id}",
+     *     summary="Xóa thị trường",
+     *     tags={"Markets"},
+     *     security={{"bearerAuth": {}}},
+     *     @OA\Parameter(name="id", in="path", required=true, @OA\Schema(type="integer")),
+     *     @OA\Response(response=204, description="Xóa thành công"),
+     *     @OA\Response(response=404, description="Không tìm thấy thị trường")
+     * )
+     */
+    public function destroy($id): JsonResponse
     {
-        $market = Market::findOrFail($id);
-        $market->update([
-            'market_code' => $request->market_code,
-            'market_name' => $request->market_name,
-            'description' => $request->description,
-        ]);
-
-        return redirect()->route('market.index')->with('success', 'Cập nhật thị trường thành công!');
-    }
-
-    public function destroy(Market $market)
-    {
-        $market->delete();
-        return redirect()->route('market.index')->with('success', 'Xóa thị trường thành công.');
+        return $this->marketService->deleteMarket($id)
+            ? $this->success(null, 'Xóa thị trường thành công!')
+            : $this->error('Thị trường không tồn tại hoặc không thể xóa!', 404);
     }
 }

@@ -38,7 +38,7 @@ class AccountController extends Controller
      */
     public function index(Request $request)
     {
-        $users = $this->userService->getAllUsers(
+        $users = $this->userService->getUsers(
             $request->get('status'),
             $request->get('role_id'),
             $request->get('search')

@@ -12,7 +12,7 @@ class RoleRepository extends BaseRepository implements RoleRepositoryInterface
         parent::__construct($model);
     }
 
-    public function getAllRoles(string $filter = null)
+    public function getRoles(string $filter = null)
     {
         return $this->model
             ->when(!empty($filter), function ($query) use ($filter) {

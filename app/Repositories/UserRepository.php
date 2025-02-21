@@ -12,7 +12,7 @@ class UserRepository extends BaseRepository implements UserRepositoryInterface
         parent::__construct($model);
     }
     
-    public function getAllUsers(?string $status, ?int $roleId, ?string $search)
+    public function getUsers(?string $status, ?int $roleId, ?string $search)
     {
         return User::query()
             ->when($status, fn($query) => $query->where('status', $status))

@@ -111,6 +111,230 @@
                 ]
             }
         },
+        "/api/markets": {
+            "get": {
+                "tags": [
+                    "Markets"
+                ],
+                "summary": "Lấy danh sách thị trường",
+                "operationId": "17a88c376cfd6bab86e03980a7dcd471",
+                "parameters": [
+                    {
+                        "name": "search",
+                        "in": "query",
+                        "description": "Tìm kiếm theo tên thị trường",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "Số trang",
+                        "schema": {
+                            "type": "integer",
+                            "default": 1
+                        }
+                    },
+                    {
+                        "name": "per_page",
+                        "in": "query",
+                        "description": "Số lượng thị trường trên mỗi trang",
+                        "schema": {
+                            "type": "integer",
+                            "default": 10
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Danh sách thị trường có phân trang",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/Market"
+                                            }
+                                        },
+                                        "current_page": {
+                                            "type": "integer"
+                                        },
+                                        "last_page": {
+                                            "type": "integer"
+                                        },
+                                        "per_page": {
+                                            "type": "integer"
+                                        },
+                                        "total": {
+                                            "type": "integer"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Markets"
+                ],
+                "summary": "Thêm mới thị trường",
+                "operationId": "54183fc66e54e750fe20f126c6f186f7",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/StoreMarketRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Thị trường đã được tạo",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Market"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/markets/{id}": {
+            "get": {
+                "tags": [
+                    "Markets"
+                ],
+                "summary": "Lấy thông tin chi tiết thị trường",
+                "operationId": "117303c26e8aea79b601066711915bb7",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Thông tin thị trường",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Market"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Không tìm thấy thị trường"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "put": {
+                "tags": [
+                    "Markets"
+                ],
+                "summary": "Cập nhật thông tin thị trường",
+                "operationId": "eadc51aac872572d963c4a98afb056eb",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/UpdateMarketRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Cập nhật thành công",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Market"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Không tìm thấy thị trường"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Markets"
+                ],
+                "summary": "Xóa thị trường",
+                "operationId": "ff82a1fb5bbd34f03c4caa6441347bac",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "Xóa thành công"
+                    },
+                    "404": {
+                        "description": "Không tìm thấy thị trường"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
         "/api/documents": {
             "get": {
                 "tags": [
@@ -602,6 +826,30 @@
                 },
                 "type": "object"
             },
+            "StoreMarketRequest": {
+                "required": [
+                    "marketCode",
+                    "marketName"
+                ],
+                "properties": {
+                    "marketCode": {
+                        "type": "string",
+                        "maxLength": 50,
+                        "example": "MK001"
+                    },
+                    "marketName": {
+                        "type": "string",
+                        "maxLength": 255,
+                        "example": "Chợ Bến Thành"
+                    },
+                    "description": {
+                        "type": "string",
+                        "example": "Chợ nổi tiếng tại TP.HCM",
+                        "nullable": true
+                    }
+                },
+                "type": "object"
+            },
             "StoreRoleRequest": {
                 "title": "Store Role Request",
                 "description": "Yêu cầu tạo mới vai trò",
@@ -686,6 +934,30 @@
                         "type": "string",
                         "format": "password",
                         "example": "password123"
+                    }
+                },
+                "type": "object"
+            },
+            "UpdateMarketRequest": {
+                "required": [
+                    "marketCode",
+                    "marketName"
+                ],
+                "properties": {
+                    "marketCode": {
+                        "type": "string",
+                        "maxLength": 50,
+                        "example": "MK001"
+                    },
+                    "marketName": {
+                        "type": "string",
+                        "maxLength": 255,
+                        "example": "Chợ Bến Thành"
+                    },
+                    "description": {
+                        "type": "string",
+                        "example": "Chợ nổi tiếng tại TP.HCM",
+                        "nullable": true
                     }
                 },
                 "type": "object"
@@ -781,6 +1053,30 @@
                     "filePath": {
                         "type": "string",
                         "example": "documents/document.pdf"
+                    }
+                },
+                "type": "object"
+            },
+            "Market": {
+                "title": "Market Resource",
+                "description": "Chi tiết thông tin thị trường",
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "marketCode": {
+                        "type": "string",
+                        "example": "MK001"
+                    },
+                    "marketName": {
+                        "type": "string",
+                        "example": "Chợ Bến Thành"
+                    },
+                    "description": {
+                        "type": "string",
+                        "example": "Chợ nổi tiếng tại TP.HCM",
+                        "nullable": true
                     }
                 },
                 "type": "object"
@@ -925,6 +1221,10 @@
         {
             "name": "Authentication",
             "description": "API xác thực người dùng"
+        },
+        {
+            "name": "Markets",
+            "description": "Quản lý thị trường"
         },
         {
             "name": "Documents",
