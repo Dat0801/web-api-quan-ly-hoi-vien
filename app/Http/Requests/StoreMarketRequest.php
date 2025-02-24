@@ -6,6 +6,7 @@ use Illuminate\Foundation\Http\FormRequest;
 /**
  * @OA\Schema(
  *     schema="StoreMarketRequest",
+ *     title="Store Martket Request",
  *     required={"marketCode", "marketName"},
  *     @OA\Property(property="marketCode", type="string", maxLength=50, example="MK001"),
  *     @OA\Property(property="marketName", type="string", maxLength=255, example="Chợ Bến Thành"),

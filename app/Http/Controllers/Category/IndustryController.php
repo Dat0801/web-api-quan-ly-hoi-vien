@@ -3,62 +3,184 @@
 namespace App\Http\Controllers\Category;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\StoreIndustryRequest;
+use App\Http\Requests\UpdateIndustryRequest;
+use App\Http\Resources\IndustryResource;
+use App\Services\IndustryService;
 use Illuminate\Http\Request;
-use App\Http\Requests\IndustryRequest;
-use App\Models\Industry;
+use Illuminate\Http\JsonResponse;
+use App\Traits\ApiResponse;
 
+/**
+ * @OA\Tag(
+ *     name="Industries",
+ *     description="Quản lý ngành nghề"
+ * )
+ */
 class IndustryController extends Controller
 {
-    //
-    public function index(Request $request)
-    {
-        $search = $request->input('search'); 
+    use ApiResponse;
 
-        $industries = Industry::when($search, function ($query, $search) {
-            return $query->where('industry_name', 'LIKE', '%' . $search . '%');
-        })->paginate(perPage: 3); 
+    protected $industryService;
 
-        return view('category.industry.index', compact('industries'));
-    }
-    public function create()
+    public function __construct(IndustryService $industryService)
     {
-        return view('category.industry.create'); 
+        $this->industryService = $industryService;
     }
 
-    public function store(IndustryRequest $request)
+    /**
+     * @OA\Get(
+     *     path="/api/industries",
+     *     summary="Lấy danh sách ngành nghề",
+     *     tags={"Industries"},
+     *     security={{"bearerAuth": {}}},    
+     *     @OA\Parameter(
+     *         name="search",
+     *         in="query",
+     *         description="Tìm kiếm theo tên ngành nghề",
+     *         required=false,
+     *         @OA\Schema(type="string")
+     *     ),
+     *     @OA\Parameter(
+     *         name="per_page",
+     *         in="query",
+     *         description="Số lượng ngành nghề trên mỗi trang",
+     *         required=false,
+     *         @OA\Schema(type="integer", default=10)
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Danh sách ngành nghề",
+     *         @OA\JsonContent(type="array", @OA\Items(ref="#/components/schemas/Industry"))
+     *     )
+     * )
+     */
+    public function index(Request $request): JsonResponse
     {
-        Industry::create($request->all());
-        return redirect()->route('industry.index')->with('success', 'Thêm ngành thành công.');
+        $industries = $this->industryService->getIndustries($request->search, $request->per_page);
+        return $this->success(IndustryResource::collection($industries), "Lấy danh sách ngành nghề thành công");
     }
 
-    public function show($id)
+    /**
+     * @OA\Post(
+     *     path="/api/industries",
+     *     summary="Thêm ngành nghề",
+     *     tags={"Industries"},
+     *     security={{"bearerAuth": {}}},
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\MediaType(
+     *             mediaType="application/json",
+     *             @OA\Schema(ref="#/components/schemas/StoreIndustryRequest")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=201,
+     *         description="Ngành nghề đã được tạo",
+     *         @OA\JsonContent(ref="#/components/schemas/Industry")
+     *     )
+     * )
+     */
+    public function store(StoreIndustryRequest $request): JsonResponse
     {
-        $industry = Industry::findOrFail($id);
-        return view('category.industry.show', compact('industry'));
+        $industry = $this->industryService->createIndustry($request->validated());
+        return $this->success(new IndustryResource($industry), 'Ngành nghề đã được tạo thành công!', 201);
     }
 
-    public function edit($id)
+    /**
+     * @OA\Get(
+     *     path="/api/industries/{id}",
+     *     summary="Lấy thông tin ngành nghề",
+     *     tags={"Industries"},
+     *     security={{"bearerAuth": {}}},
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         description="ID của ngành nghề",
+     *         required=true,
+     *         @OA\Schema(type="integer")
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Thông tin ngành nghề",
+     *         @OA\JsonContent(ref="#/components/schemas/Industry")
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="Ngành nghề không tồn tại"
+     *     )
+     * )
+     */
+    public function show($id): JsonResponse
     {
-        $industry = Industry::findOrFail($id);
-        return view('category.industry.edit', compact('industry'));
+        $industry = $this->industryService->getIndustryById($id);
+        return $industry ? $this->success(new IndustryResource($industry)) : $this->error('Ngành nghề không tồn tại!', 404);
     }
 
-    public function update(IndustryRequest $request, $id)
+    /**
+     * @OA\Put(
+     *     path="/api/industries/{id}",
+     *     summary="Cập nhật ngành nghề",
+     *     tags={"Industries"},
+     *     security={{"bearerAuth": {}}},
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         description="ID của ngành nghề",
+     *         required=true,
+     *         @OA\Schema(type="integer")
+     *     ),
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\MediaType(
+     *             mediaType="application/json",
+     *             @OA\Schema(ref="#/components/schemas/StoreIndustryRequest")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Cập nhật ngành nghề thành công",
+     *         @OA\JsonContent(ref="#/components/schemas/Industry")
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="Ngành nghề không tồn tại"
+     *     )
+     * )
+     */
+    public function update(UpdateIndustryRequest $request, $id): JsonResponse
     {
-        $industry = Industry::findOrFail($id);
-        $industry->update([
-            'industry_code' => $request->industry_code,
-            'industry_name' => $request->industry_name,
-            'description' => $request->description,
-        ]);
-
-        return redirect()->route('industry.index')->with('success', 'Cập nhật ngành thành công!');
+        $industry = $this->industryService->updateIndustry($id, $request->validated());
+        return $this->success(new IndustryResource($industry), 'Cập nhật ngành nghề thành công!');
     }
 
-
-    public function destroy(Industry $industry)
+    /**
+     * @OA\Delete(
+     *     path="/api/industries/{id}",
+     *     summary="Xóa ngành nghề",
+     *     tags={"Industries"},
+     *     security={{"bearerAuth": {}}},
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         description="ID của ngành nghề",
+     *         required=true,
+     *         @OA\Schema(type="integer")
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Xóa ngành nghề thành công"
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="Ngành nghề không tồn tại hoặc không thể xóa"
+     *     )
+     * )
+     */
+    public function destroy($id): JsonResponse
     {
-        $industry->delete();
-        return redirect()->route('industry.index')->with('success', 'Xóa ngành thành công.');
+        return $this->industryService->deleteIndustry($id)
+            ? $this->success(null, 'Xóa ngành nghề thành công!')
+            : $this->error('Ngành nghề không tồn tại hoặc không thể xóa!', 404);
     }
 }

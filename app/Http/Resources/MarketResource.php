@@ -8,7 +8,7 @@ use App\Traits\HasPaginatedResource;
  * @OA\Schema(
  *     schema="Market",
  *     type="object",
- *     title="Market Resource",
+ *     title="Market",
  *     description="Chi tiết thông tin thị trường",
  *     @OA\Property(property="id", type="integer", example=1),
  *     @OA\Property(property="marketCode", type="string", example="MK001"),

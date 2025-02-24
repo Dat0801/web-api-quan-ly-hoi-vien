@@ -111,6 +111,209 @@
                 ]
             }
         },
+        "/api/industries": {
+            "get": {
+                "tags": [
+                    "Industries"
+                ],
+                "summary": "Lấy danh sách ngành nghề",
+                "operationId": "c0a4ae08f3bf3eddc64c4eedca45b955",
+                "parameters": [
+                    {
+                        "name": "search",
+                        "in": "query",
+                        "description": "Tìm kiếm theo tên ngành nghề",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "per_page",
+                        "in": "query",
+                        "description": "Số lượng ngành nghề trên mỗi trang",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "default": 10
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Danh sách ngành nghề",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/Industry"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Industries"
+                ],
+                "summary": "Thêm ngành nghề",
+                "operationId": "dba8b526f449b79e0ffab59d040be74b",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/StoreIndustryRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Ngành nghề đã được tạo",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Industry"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/industries/{id}": {
+            "get": {
+                "tags": [
+                    "Industries"
+                ],
+                "summary": "Lấy thông tin ngành nghề",
+                "operationId": "43f07eaa50d2049f332fe26ba7ff5f31",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID của ngành nghề",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Thông tin ngành nghề",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Industry"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Ngành nghề không tồn tại"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "put": {
+                "tags": [
+                    "Industries"
+                ],
+                "summary": "Cập nhật ngành nghề",
+                "operationId": "808a4e476b3e49110a6cc60879521d4b",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID của ngành nghề",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/StoreIndustryRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Cập nhật ngành nghề thành công",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Industry"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Ngành nghề không tồn tại"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Industries"
+                ],
+                "summary": "Xóa ngành nghề",
+                "operationId": "5488eb2ba64ff2e4ae9b9855ee5ceb28",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID của ngành nghề",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Xóa ngành nghề thành công"
+                    },
+                    "404": {
+                        "description": "Ngành nghề không tồn tại hoặc không thể xóa"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
         "/api/markets": {
             "get": {
                 "tags": [
@@ -278,7 +481,7 @@
                     "content": {
                         "application/json": {
                             "schema": {
-                                "$ref": "#/components/schemas/UpdateMarketRequest"
+                                "$ref": "#/components/schemas/StoreMarketRequest"
                             }
                         }
                     }
@@ -826,7 +1029,34 @@
                 },
                 "type": "object"
             },
+            "StoreIndustryRequest": {
+                "title": "Store Industry Request",
+                "description": "Yêu cầu tạo mới ngành nghề",
+                "required": [
+                    "industry_code",
+                    "industry_name"
+                ],
+                "properties": {
+                    "industry_code": {
+                        "type": "string",
+                        "maxLength": 50,
+                        "example": "IT"
+                    },
+                    "industry_name": {
+                        "type": "string",
+                        "maxLength": 255,
+                        "example": "Công nghệ thông tin"
+                    },
+                    "description": {
+                        "type": "string",
+                        "example": "Ngành liên quan đến phần mềm, phần cứng và công nghệ",
+                        "nullable": true
+                    }
+                },
+                "type": "object"
+            },
             "StoreMarketRequest": {
+                "title": "Store Martket Request",
                 "required": [
                     "marketCode",
                     "marketName"
@@ -938,30 +1168,6 @@
                 },
                 "type": "object"
             },
-            "UpdateMarketRequest": {
-                "required": [
-                    "marketCode",
-                    "marketName"
-                ],
-                "properties": {
-                    "marketCode": {
-                        "type": "string",
-                        "maxLength": 50,
-                        "example": "MK001"
-                    },
-                    "marketName": {
-                        "type": "string",
-                        "maxLength": 255,
-                        "example": "Chợ Bến Thành"
-                    },
-                    "description": {
-                        "type": "string",
-                        "example": "Chợ nổi tiếng tại TP.HCM",
-                        "nullable": true
-                    }
-                },
-                "type": "object"
-            },
             "UpdateRoleRequest": {
                 "title": "Update Role Request",
                 "description": "Yêu cầu cập nhật vai trò",
@@ -1057,8 +1263,31 @@
                 },
                 "type": "object"
             },
+            "Industry": {
+                "title": "Industry",
+                "description": "Thông tin ngành nghề",
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "industry_code": {
+                        "type": "string",
+                        "example": "IT"
+                    },
+                    "industry_name": {
+                        "type": "string",
+                        "example": "Công nghệ thông tin"
+                    },
+                    "description": {
+                        "type": "string",
+                        "example": "Ngành liên quan đến phần mềm, phần cứng và công nghệ"
+                    }
+                },
+                "type": "object"
+            },
             "Market": {
-                "title": "Market Resource",
+                "title": "Market",
                 "description": "Chi tiết thông tin thị trường",
                 "properties": {
                     "id": {
@@ -1221,6 +1450,10 @@
         {
             "name": "Authentication",
             "description": "API xác thực người dùng"
+        },
+        {
+            "name": "Industries",
+            "description": "Quản lý ngành nghề"
         },
         {
             "name": "Markets",

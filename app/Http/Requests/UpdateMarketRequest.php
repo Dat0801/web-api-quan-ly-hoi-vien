@@ -3,15 +3,7 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
-/**
- * @OA\Schema(
- *     schema="UpdateMarketRequest",
- *     required={"marketCode", "marketName"},
- *     @OA\Property(property="marketCode", type="string", maxLength=50, example="MK001"),
- *     @OA\Property(property="marketName", type="string", maxLength=255, example="Chợ Bến Thành"),
- *     @OA\Property(property="description", type="string", nullable=true, example="Chợ nổi tiếng tại TP.HCM")
- * )
- */
+
 class UpdateMarketRequest extends FormRequest
 {
     public function authorize()

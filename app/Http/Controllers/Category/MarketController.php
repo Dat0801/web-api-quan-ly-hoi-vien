@@ -125,7 +125,7 @@ class MarketController extends Controller
      *         required=true,
      *         @OA\MediaType(
      *             mediaType="application/json",
-     *             @OA\Schema(ref="#/components/schemas/UpdateMarketRequest")
+     *             @OA\Schema(ref="#/components/schemas/StoreMarketRequest")
      *         )
      *     ),
      *     @OA\Response(response=200, description="Cập nhật thành công", @OA\JsonContent(ref="#/components/schemas/Market")),

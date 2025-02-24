@@ -13,6 +13,8 @@ use App\Interfaces\BaseRepositoryInterface;
 use App\Interfaces\UserRepositoryInterface;
 use App\Interfaces\RoleRepositoryInterface;
 use App\Interfaces\DocumentRepositoryInterface;
+use App\Interfaces\IndustryRepositoryInterface;
+use App\Repositories\IndustryRepository;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -29,6 +31,7 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(RoleRepositoryInterface::class, RoleRepository::class);
         $this->app->bind(DocumentRepositoryInterface::class, DocumentRepository::class);
         $this->app->bind(MarketRepositoryInterface::class, MarketRepository::class);
+        $this->app->bind(IndustryRepositoryInterface::class, IndustryRepository::class);
     }
 
     /**

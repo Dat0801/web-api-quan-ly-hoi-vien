@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Category\IndustryController;
 use App\Http\Controllers\Category\MarketController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -59,6 +60,14 @@ Route::middleware(['auth:sanctum', 'token.expiration'])->group(function () {
         Route::get('/{id}', [MarketController::class, 'show']);
         Route::put('/{id}', [MarketController::class, 'update']);
         Route::delete('/{id}', [MarketController::class, 'destroy']);
+    });
+
+    Route::prefix('industries')->group(function () {
+        Route::get('/', [IndustryController::class, 'index']);
+        Route::post('/', [IndustryController::class, 'store']);
+        Route::get('/{id}', [IndustryController::class, 'show']);
+        Route::put('/{id}', [IndustryController::class, 'update']);
+        Route::delete('/{id}', [IndustryController::class, 'destroy']);
     });
 
 
