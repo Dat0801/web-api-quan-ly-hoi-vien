@@ -3,158 +3,156 @@
 namespace App\Http\Controllers\Category;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\StoreFieldRequest;
+use App\Http\Requests\UpdateFieldRequest;
+use App\Http\Resources\FieldResource;
+use App\Services\FieldService;
 use Illuminate\Http\Request;
-use App\Models\Field;
-use App\Models\Industry;
-use App\Models\SubGroup;
+use Illuminate\Http\JsonResponse;
+use App\Traits\ApiResponse;
 
+/**
+ * @OA\Tag(
+ *     name="Fields",
+ *     description="Quản lý lĩnh vực"
+ * )
+ */
 class FieldController extends Controller
 {
-    //
-    public function index(Request $request)
+    use ApiResponse;
+
+    protected $fieldService;
+
+    public function __construct(FieldService $fieldService)
     {
-        $search = $request->input('search');
-        $industryId = $request->input('industry_id');
-
-        $industries = Industry::all();
-
-        $fields = Field::when($search, function($query, $search) {
-            return $query->where('name', 'like', "%{$search}%");
-        })
-        ->when($industryId, function($query, $industryId) {
-            return $query->where('industry_id', $industryId);
-        })->paginate(3);
-
-        return view('category.field.index', compact('fields', 'industries', 'search', 'industryId'));
+        $this->fieldService = $fieldService;
     }
 
-    public function create()
+    /**
+     * @OA\Get(
+     *     path="/api/fields",
+     *     summary="Lấy danh sách lĩnh vực",
+     *     tags={"Fields"},
+     *     security={{"bearerAuth": {}}},    
+     *     @OA\Parameter(
+     *         name="search",
+     *         in="query",
+     *         description="Tìm kiếm theo tên lĩnh vực",
+     *         required=false,
+     *         @OA\Schema(type="string")
+     *     ),
+     *     @OA\Parameter(
+     *         name="include",
+     *         in="query",
+     *         description="Bao gồm thông tin ngành nghề (giá trị: industry)",
+     *         required=false,
+     *         @OA\Schema(type="string", enum={"industry"})
+     *     ),
+     *     @OA\Parameter(
+     *         name="page",
+     *         in="query",
+     *         description="Số trang",
+     *         required=false,
+     *         @OA\Schema(type="integer", default=1)
+     *     ),
+     *     @OA\Parameter(
+     *         name="per_page",
+     *         in="query",
+     *         description="Số lượng lĩnh vực trên mỗi trang",
+     *         required=false,
+     *         @OA\Schema(type="integer", default=10)
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Danh sách lĩnh vực",
+     *         @OA\JsonContent(type="array", @OA\Items(ref="#/components/schemas/Field"))
+     *     )
+     * )
+     */
+    public function index(Request $request): JsonResponse
     {
-        $industries = Industry::all(); 
-        return view('category.field.create', compact('industries'));
+        $search = $request->query('search');
+        $perPage = (int) $request->query('per_page', 10);
+        $include = $request->query('include');
+        $fields = $this->fieldService->getFields($search, $perPage, $include);
+        return $this->success(FieldResource::collection($fields), "Lấy danh sách lĩnh vực thành công");
     }
 
-    public function store(Request $request)
+    /**
+     * @OA\Post(
+     *     path="/api/fields",
+     *     summary="Thêm lĩnh vực",
+     *     tags={"Fields"},
+     *     security={{"bearerAuth": {}}},
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\MediaType(
+     *             mediaType="application/json",
+     *             @OA\Schema(ref="#/components/schemas/StoreFieldRequest")
+     *         )
+     *     ),
+     *     @OA\Response(response=201, description="Lĩnh vực đã được tạo", @OA\JsonContent(ref="#/components/schemas/Field"))
+     * )
+     */
+    public function store(StoreFieldRequest $request): JsonResponse
     {
-        $request->validate([
-            'name' => 'required',
-            'code' => 'required|unique:fields',
-            'description' => 'nullable',
-            'industry_id' => 'required',
-            'sub_groups' => 'nullable|array',
-            'sub_groups.*.name' => 'required|string', 
-            'sub_groups.*.description' => 'nullable|string', 
-        ]);
-
-        $field = Field::create([
-            'name' => $request->name,
-            'code' => $request->code,
-            'description' => $request->description,
-            'industry_id' => $request->industry_id,
-        ]);
-
-        if ($request->has('sub_groups')) {
-            foreach ($request->sub_groups as $sub_group_data) {
-                SubGroup::create([
-                    'name' => $sub_group_data['name'],
-                    'description' => $sub_group_data['description'],
-                    'field_id' => $field->id,
-                ]);
-            }
-        }
-
-        return redirect()->route('field.index', ['tab' => 'fields'])
-                 ->with('success', 'Thêm lĩnh vực thành công!');
+        $field = $this->fieldService->createField($request->validated());
+        return $this->success(new FieldResource($field), 'Lĩnh vực đã được tạo thành công!', 201);
     }
 
-    public function show($id)
+    /**
+     * @OA\Get(
+     *     path="/api/fields/{id}",
+     *     summary="Lấy thông tin lĩnh vực",
+     *     tags={"Fields"},
+     *     security={{"bearerAuth": {}}},
+     *     @OA\Parameter(name="id", in="path", required=true, @OA\Schema(type="integer")),
+     *     @OA\Response(response=200, description="Chi tiết lĩnh vực", @OA\JsonContent(ref="#/components/schemas/Field"))
+     * )
+     */
+    public function show($id): JsonResponse
     {
-        $field = Field::with('subGroups')->findOrFail($id); 
-
-        return view('category.field.show', compact('field'));
+        $field = $this->fieldService->getFieldById($id);
+        return $field ? $this->success(new FieldResource($field)) : $this->error('Lĩnh vực không tồn tại!', 404);
     }
 
-    public function edit($id)
+    /**
+     * @OA\Put(
+     *     path="/api/fields/{id}",
+     *     summary="Cập nhật lĩnh vực",
+     *     tags={"Fields"},
+     *     security={{"bearerAuth": {}}},
+     *     @OA\Parameter(name="id", in="path", required=true, @OA\Schema(type="integer")),
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\MediaType(
+     *             mediaType="application/json",
+     *             @OA\Schema(ref="#/components/schemas/StoreFieldRequest")
+     *         )
+     *     ),
+     *     @OA\Response(response=200, description="Cập nhật lĩnh vực thành công", @OA\JsonContent(ref="#/components/schemas/Field"))
+     * )
+     */
+    public function update(UpdateFieldRequest $request, $id): JsonResponse
     {
-        $field = Field::with('subGroups')->findOrFail($id); 
-        $industries = Industry::all();
-        return view('category.field.edit', compact('field', 'industries'));
+        $field = $this->fieldService->updateField($id, $request->validated());
+        return $this->success(new FieldResource($field), 'Cập nhật lĩnh vực thành công!');
     }
 
-    public function update(Request $request, $id)
+    /**
+     * @OA\Delete(
+     *     path="/api/fields/{id}",
+     *     summary="Xóa lĩnh vực",
+     *     tags={"Fields"},
+     *     security={{"bearerAuth": {}}},
+     *     @OA\Parameter(name="id", in="path", required=true, @OA\Schema(type="integer")),
+     *     @OA\Response(response=200, description="Xóa lĩnh vực thành công")
+     * )
+     */
+    public function destroy($id): JsonResponse
     {
-        $field = Field::with('subGroups')->findOrFail($id);
-
-        // Validate dữ liệu
-        $request->validate([
-            'name' => 'required',
-            'code' => "required|unique:fields,code,{$id}",
-            'description' => 'nullable',
-            'industry_id' => 'required',
-            'sub_groups' => 'nullable|array',
-            'sub_groups.*.id' => 'nullable|exists:sub_groups,id',
-            'sub_groups.*.name' => 'required|string',
-            'sub_groups.*.description' => 'nullable|string',
-        ]);
-
-        // Cập nhật thông tin lĩnh vực
-        $field->update([
-            'name' => $request->name,
-            'code' => $request->code,
-            'description' => $request->description,
-            'industry_id' => $request->industry_id,
-        ]);
-
-        $existingSubGroupIds = $field->subGroups->pluck('id')->toArray(); // Lấy danh sách ID nhóm con hiện có
-        $submittedSubGroupIds = $request->input('sub_groups.*.id', []); // Lấy danh sách ID nhóm con từ yêu cầu
-
-        // Cập nhật hoặc tạo nhóm con
-        if ($request->has('sub_groups')) {
-            foreach ($request->sub_groups as $subGroupData) {
-                if (isset($subGroupData['id']) && in_array($subGroupData['id'], $existingSubGroupIds)) {
-                    // Nếu nhóm con đã tồn tại, cập nhật
-                    SubGroup::where('id', $subGroupData['id'])->update([
-                        'name' => $subGroupData['name'],
-                        'description' => $subGroupData['description'],
-                    ]);
-                } else {
-                    // Nếu nhóm con chưa tồn tại, tạo mới
-                    SubGroup::create([
-                        'name' => $subGroupData['name'],
-                        'description' => $subGroupData['description'],
-                        'field_id' => $field->id,
-                    ]);
-                }
-            }
-        }
-
-        // Xóa các nhóm con không được gửi trong yêu cầu (nếu cần)
-        $subGroupsToDelete = array_diff($existingSubGroupIds, $submittedSubGroupIds);
-        SubGroup::whereIn('id', $subGroupsToDelete)->delete();
-
-        return redirect()->route('field.index', ['tab' => 'fields'])
-            ->with('success', 'Cập nhật lĩnh vực thành công!');
-    }
-
-
-    public function destroySubGroup($id)
-    {
-        $subGroup = SubGroup::findOrFail($id);
-        $subGroup->delete();
-        return back();
-    }
-
-    public function destroy($id)
-    {
-        $field = Field::findOrFail($id);
-
-        foreach ($field->subGroups as $subGroup) {
-            $subGroup->delete(); 
-        }
-
-        $field->delete();
-
-        return redirect()->route('field.index' , ['tab' => 'fields'])
-        ->with('success', 'Lĩnh vực và các nhóm con đã được xóa thành công!');
+        return $this->fieldService->deleteField($id)
+            ? $this->success(null, 'Xóa lĩnh vực thành công!')
+            : $this->error('Lĩnh vực không tồn tại hoặc không thể xóa!', 404);
     }
 }

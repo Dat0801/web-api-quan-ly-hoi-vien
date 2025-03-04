@@ -111,6 +111,431 @@
                 ]
             }
         },
+        "/api/business": {
+            "get": {
+                "tags": [
+                    "Business"
+                ],
+                "summary": "Lấy danh sách doanh nghiệp",
+                "operationId": "26dbe1770e81c119c7275e66f251f994",
+                "parameters": [
+                    {
+                        "name": "search",
+                        "in": "query",
+                        "description": "Tìm kiếm theo tên doanh nghiệp",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "Số trang",
+                        "schema": {
+                            "type": "integer",
+                            "default": 1
+                        }
+                    },
+                    {
+                        "name": "per_page",
+                        "in": "query",
+                        "description": "Số lượng doanh nghiệp trên mỗi trang",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "default": 10
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Danh sách doanh nghiệp",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/Business"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Business"
+                ],
+                "summary": "Thêm doanh nghiệp",
+                "operationId": "4714f3ec814bf207176bb5264183e7a0",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/StoreBusinessRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "doanh nghiệp đã được tạo",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Business"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/business/{id}": {
+            "get": {
+                "tags": [
+                    "Business"
+                ],
+                "summary": "Lấy thông tin doanh nghiệp",
+                "operationId": "97084bfb2c9dfb011102fd498abbfc60",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID của doanh nghiệp",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Thông tin doanh nghiệp",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Business"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "doanh nghiệp không tồn tại"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "put": {
+                "tags": [
+                    "Business"
+                ],
+                "summary": "Cập nhật doanh nghiệp",
+                "operationId": "f809cda66486896031320636f03e72da",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID của doanh nghiệp",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/StoreBusinessRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Cập nhật doanh nghiệp thành công",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Business"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "doanh nghiệp không tồn tại"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Business"
+                ],
+                "summary": "Xóa doanh nghiệp",
+                "operationId": "6ec006a54e5457bb7fa629437a310a3a",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID của doanh nghiệp",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Xóa doanh nghiệp thành công"
+                    },
+                    "404": {
+                        "description": "doanh nghiệp không tồn tại hoặc không thể xóa"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/fields": {
+            "get": {
+                "tags": [
+                    "Fields"
+                ],
+                "summary": "Lấy danh sách lĩnh vực",
+                "operationId": "ed4e3b5962d776e2c809da06ef98bcb9",
+                "parameters": [
+                    {
+                        "name": "search",
+                        "in": "query",
+                        "description": "Tìm kiếm theo tên lĩnh vực",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "include",
+                        "in": "query",
+                        "description": "Bao gồm thông tin ngành nghề (giá trị: industry)",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "industry"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "Số trang",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "default": 1
+                        }
+                    },
+                    {
+                        "name": "per_page",
+                        "in": "query",
+                        "description": "Số lượng lĩnh vực trên mỗi trang",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "default": 10
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Danh sách lĩnh vực",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/Field"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Fields"
+                ],
+                "summary": "Thêm lĩnh vực",
+                "operationId": "5d9dc653b47441716ba2895eb04097e5",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/StoreFieldRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Lĩnh vực đã được tạo",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Field"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/fields/{id}": {
+            "get": {
+                "tags": [
+                    "Fields"
+                ],
+                "summary": "Lấy thông tin lĩnh vực",
+                "operationId": "448c44f7fae786393ad58cf62a57fe15",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Chi tiết lĩnh vực",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Field"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "put": {
+                "tags": [
+                    "Fields"
+                ],
+                "summary": "Cập nhật lĩnh vực",
+                "operationId": "af9b47e04bce042a87e12812024e1d4f",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/StoreFieldRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Cập nhật lĩnh vực thành công",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Field"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Fields"
+                ],
+                "summary": "Xóa lĩnh vực",
+                "operationId": "fcd95fafaad253751c4c1b5a9ffa8401",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Xóa lĩnh vực thành công"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
         "/api/industries": {
             "get": {
                 "tags": [
@@ -126,6 +551,15 @@
                         "required": false,
                         "schema": {
                             "type": "string"
+                        }
+                    },
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "Số trang",
+                        "schema": {
+                            "type": "integer",
+                            "default": 1
                         }
                     },
                     {
@@ -1013,6 +1447,32 @@
     },
     "components": {
         "schemas": {
+            "StoreBusinessRequest": {
+                "title": "Store Business Request",
+                "description": "Yêu cầu tạo mới ngành nghề",
+                "required": [
+                    "business_code",
+                    "business_name"
+                ],
+                "properties": {
+                    "business_code": {
+                        "type": "string",
+                        "maxLength": 50,
+                        "example": "IT"
+                    },
+                    "business_name": {
+                        "type": "string",
+                        "maxLength": 255,
+                        "example": "Công nghệ thông tin"
+                    },
+                    "description": {
+                        "type": "string",
+                        "example": "Ngành liên quan đến phần mềm, phần cứng và công nghệ",
+                        "nullable": true
+                    }
+                },
+                "type": "object"
+            },
             "StoreDocumentRequest": {
                 "title": "Store Document Request",
                 "description": "Yêu cầu lưu tài liệu mới",
@@ -1025,6 +1485,54 @@
                         "type": "string",
                         "format": "binary",
                         "example": "file.pdf"
+                    }
+                },
+                "type": "object"
+            },
+            "StoreFieldRequest": {
+                "required": [
+                    "name",
+                    "code",
+                    "industry_id"
+                ],
+                "properties": {
+                    "name": {
+                        "description": "Tên của lĩnh vực",
+                        "type": "string",
+                        "example": "Lập trình phần mềm"
+                    },
+                    "code": {
+                        "description": "Mã lĩnh vực, phải là duy nhất",
+                        "type": "string",
+                        "example": "IT-SW"
+                    },
+                    "description": {
+                        "description": "Mô tả lĩnh vực",
+                        "type": "string",
+                        "example": "Lĩnh vực phát triển phần mềm"
+                    },
+                    "industry_id": {
+                        "description": "ID của ngành nghề liên quan",
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "sub_groups": {
+                        "type": "array",
+                        "items": {
+                            "properties": {
+                                "name": {
+                                    "description": "Tên nhóm con",
+                                    "type": "string",
+                                    "example": "Frontend Development"
+                                },
+                                "description": {
+                                    "description": "Mô tả nhóm con",
+                                    "type": "string",
+                                    "example": "Phát triển giao diện người dùng"
+                                }
+                            },
+                            "type": "object"
+                        }
                     }
                 },
                 "type": "object"
@@ -1240,6 +1748,29 @@
                 },
                 "type": "object"
             },
+            "Business": {
+                "title": "Business",
+                "description": "Thông tin ngành nghề",
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "business_code": {
+                        "type": "string",
+                        "example": "IT"
+                    },
+                    "business_name": {
+                        "type": "string",
+                        "example": "Công nghệ thông tin"
+                    },
+                    "description": {
+                        "type": "string",
+                        "example": "Ngành liên quan đến phần mềm, phần cứng và công nghệ"
+                    }
+                },
+                "type": "object"
+            },
             "Document": {
                 "title": "Document",
                 "description": "Chi tiết tài liệu",
@@ -1259,6 +1790,36 @@
                     "filePath": {
                         "type": "string",
                         "example": "documents/document.pdf"
+                    }
+                },
+                "type": "object"
+            },
+            "Field": {
+                "title": "Field",
+                "description": "Thông tin lĩnh vực",
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "code": {
+                        "type": "string",
+                        "example": "IT-DEV"
+                    },
+                    "name": {
+                        "type": "string",
+                        "example": "Phát triển phần mềm"
+                    },
+                    "description": {
+                        "type": "string",
+                        "example": "Lĩnh vực chuyên về phát triển phần mềm, ứng dụng và hệ thống"
+                    },
+                    "industry_id": {
+                        "type": "integer",
+                        "example": 2
+                    },
+                    "industry": {
+                        "$ref": "#/components/schemas/Industry"
                     }
                 },
                 "type": "object"
@@ -1450,6 +2011,14 @@
         {
             "name": "Authentication",
             "description": "API xác thực người dùng"
+        },
+        {
+            "name": "Business",
+            "description": "Quản lý doanh nghiệp"
+        },
+        {
+            "name": "Fields",
+            "description": "Quản lý lĩnh vực"
         },
         {
             "name": "Industries",

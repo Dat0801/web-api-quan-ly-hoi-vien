@@ -2,7 +2,11 @@
 
 namespace App\Providers;
 
+use App\Interfaces\BusinessRepositoryInterface;
+use App\Interfaces\FieldRepositoryInterface;
 use App\Interfaces\MarketRepositoryInterface;
+use App\Repositories\BusinessRepository;
+use App\Repositories\FieldRepository;
 use App\Repositories\MarketRepository;
 use Illuminate\Support\ServiceProvider;
 use App\Repositories\BaseRepository;
@@ -32,6 +36,8 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(DocumentRepositoryInterface::class, DocumentRepository::class);
         $this->app->bind(MarketRepositoryInterface::class, MarketRepository::class);
         $this->app->bind(IndustryRepositoryInterface::class, IndustryRepository::class);
+        $this->app->bind(FieldRepositoryInterface::class, FieldRepository::class);
+        $this->app->bind(BusinessRepositoryInterface::class, BusinessRepository::class);
     }
 
     /**

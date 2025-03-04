@@ -1,5 +1,8 @@
 <?php
 
+use App\Http\Controllers\Category\BusinessController;
+use App\Http\Controllers\Category\CertificateController;
+use App\Http\Controllers\Category\FieldController;
 use App\Http\Controllers\Category\IndustryController;
 use App\Http\Controllers\Category\MarketController;
 use Illuminate\Http\Request;
@@ -70,6 +73,29 @@ Route::middleware(['auth:sanctum', 'token.expiration'])->group(function () {
         Route::delete('/{id}', [IndustryController::class, 'destroy']);
     });
 
+    Route::prefix('fields')->group(callback: function () {
+        Route::get('/', [FieldController::class, 'index']);
+        Route::post('/', [FieldController::class, 'store']);
+        Route::get('/{id}', [FieldController::class, 'show']);
+        Route::put('/{id}', [FieldController::class, 'update']);
+        Route::delete('/{id}', [FieldController::class, 'destroy']);
+    });
+
+    Route::prefix('business')->group(callback: function () {
+        Route::get('/', [BusinessController::class, 'index']);
+        Route::post('/', [BusinessController::class, 'store']);
+        Route::get('/{id}', [BusinessController::class, 'show']);
+        Route::put('/{id}', [BusinessController::class, 'update']);
+        Route::delete('/{id}', [BusinessController::class, 'destroy']);
+    });
+
+    Route::prefix('certificates')->group(callback: function () {
+        Route::get('/', [CertificateController::class, 'index']);
+        Route::post('/', [CertificateController::class, 'store']);
+        Route::get('/{id}', [CertificateController::class, 'show']);
+        Route::put('/{id}', [CertificateController::class, 'update']);
+        Route::delete('/{id}', [CertificateController::class, 'destroy']);
+    });
 
     Route::post('/logout', [AuthController::class, 'logout']);
 });

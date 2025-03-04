@@ -3,73 +3,190 @@
 namespace App\Http\Controllers\Category;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\StoreBusinessRequest;
+use App\Http\Requests\UpdateBusinessRequest;
+use App\Http\Resources\BusinessResource;
+use App\Services\BusinessService;
 use Illuminate\Http\Request;
-use App\Models\Business;
+use Illuminate\Http\JsonResponse;
+use App\Traits\ApiResponse;
 
+/**
+ * @OA\Tag(
+ *     name="Business",
+ *     description="Quản lý doanh nghiệp"
+ * )
+ */
 class BusinessController extends Controller
 {
-    //
-    public function index(Request $request)
-    {
-        // Lấy giá trị từ trường tìm kiếm
-        $search = $request->input('search');
-        
-        // Kiểm tra nếu có từ khóa tìm kiếm
-        if ($search) {
-            // Nếu có, tìm kiếm theo mã doanh nghiệp hoặc tên doanh nghiệp
-            $businesses = Business::where('business_code', 'like', '%' . $search . '%')
-                ->orWhere('business_name', 'like', '%' . $search . '%')
-                ->paginate(3);
-        } else {
-            // Nếu không có từ khóa tìm kiếm, hiển thị tất cả các doanh nghiệp
-            $businesses = Business::paginate(3);
-        }
+    use ApiResponse;
 
-        return view('category.businesses.index', compact('businesses', 'search'));
+    protected $businessService;
+
+    public function __construct(BusinessService $businessService)
+    {
+        $this->businessService = $businessService;
     }
 
-    public function create()
+    /**
+     * @OA\Get(
+     *     path="/api/business",
+     *     summary="Lấy danh sách doanh nghiệp",
+     *     tags={"Business"},
+     *     security={{"bearerAuth": {}}},    
+     *     @OA\Parameter(
+     *         name="search",
+     *         in="query",
+     *         description="Tìm kiếm theo tên doanh nghiệp",
+     *         required=false,
+     *         @OA\Schema(type="string")
+     *     ),
+     *     @OA\Parameter(
+     *         name="page",
+     *         in="query",
+     *         description="Số trang",
+     *         @OA\Schema(type="integer", default=1)
+     *     ),
+     *     @OA\Parameter(
+     *         name="per_page",
+     *         in="query",
+     *         description="Số lượng doanh nghiệp trên mỗi trang",
+     *         required=false,
+     *         @OA\Schema(type="integer", default=10)
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Danh sách doanh nghiệp",
+     *         @OA\JsonContent(type="array", @OA\Items(ref="#/components/schemas/Business"))
+     *     )
+     * )
+     */
+    public function index(Request $request): JsonResponse
     {
-        return view('category.businesses.create');
+        $business = $this->businessService->getBusiness($request->search, $request->per_page);
+        return $this->success(BusinessResource::collection($business), "Lấy danh sách doanh nghiệp thành công");
     }
 
-    public function store(Request $request)
+    /**
+     * @OA\Post(
+     *     path="/api/business",
+     *     summary="Thêm doanh nghiệp",
+     *     tags={"Business"},
+     *     security={{"bearerAuth": {}}},
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\MediaType(
+     *             mediaType="application/json",
+     *             @OA\Schema(ref="#/components/schemas/StoreBusinessRequest")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=201,
+     *         description="doanh nghiệp đã được tạo",
+     *         @OA\JsonContent(ref="#/components/schemas/Business")
+     *     )
+     * )
+     */
+    public function store(StoreBusinessRequest $request): JsonResponse
     {
-        $request->validate([
-            'business_code' => 'required|unique:businesses|max:255',
-            'business_name' => 'required|max:255',
-        ]);
-
-        Business::create($request->all());
-
-        return redirect()->route('business.index')->with('success', 'Doanh nghiệp đã được thêm thành công.');
+        $business = $this->businessService->createBusiness($request->validated());
+        return $this->success(new BusinessResource($business), 'doanh nghiệp đã được tạo thành công!', 201);
     }
 
-    public function show(Business $business)
+    /**
+     * @OA\Get(
+     *     path="/api/business/{id}",
+     *     summary="Lấy thông tin doanh nghiệp",
+     *     tags={"Business"},
+     *     security={{"bearerAuth": {}}},
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         description="ID của doanh nghiệp",
+     *         required=true,
+     *         @OA\Schema(type="integer")
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Thông tin doanh nghiệp",
+     *         @OA\JsonContent(ref="#/components/schemas/Business")
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="doanh nghiệp không tồn tại"
+     *     )
+     * )
+     */
+    public function show($id): JsonResponse
     {
-        return view('category.businesses.show', compact('business'));
+        $business = $this->businessService->getBusinessById($id);
+        return $business ? $this->success(new BusinessResource($business)) : $this->error('doanh nghiệp không tồn tại!', 404);
     }
 
-    public function edit(Business $business)
+    /**
+     * @OA\Put(
+     *     path="/api/business/{id}",
+     *     summary="Cập nhật doanh nghiệp",
+     *     tags={"Business"},
+     *     security={{"bearerAuth": {}}},
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         description="ID của doanh nghiệp",
+     *         required=true,
+     *         @OA\Schema(type="integer")
+     *     ),
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\MediaType(
+     *             mediaType="application/json",
+     *             @OA\Schema(ref="#/components/schemas/StoreBusinessRequest")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Cập nhật doanh nghiệp thành công",
+     *         @OA\JsonContent(ref="#/components/schemas/Business")
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="doanh nghiệp không tồn tại"
+     *     )
+     * )
+     */
+    public function update(UpdateBusinessRequest $request, $id): JsonResponse
     {
-        return view('category.businesses.edit', compact('business'));
+        $business = $this->businessService->updateBusiness($id, $request->validated());
+        return $this->success(new BusinessResource($business), 'Cập nhật doanh nghiệp thành công!');
     }
 
-    public function update(Request $request, Business $business)
+    /**
+     * @OA\Delete(
+     *     path="/api/business/{id}",
+     *     summary="Xóa doanh nghiệp",
+     *     tags={"Business"},
+     *     security={{"bearerAuth": {}}},
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         description="ID của doanh nghiệp",
+     *         required=true,
+     *         @OA\Schema(type="integer")
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Xóa doanh nghiệp thành công"
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="doanh nghiệp không tồn tại hoặc không thể xóa"
+     *     )
+     * )
+     */
+    public function destroy($id): JsonResponse
     {
-        $request->validate([
-            'business_code' => 'required|max:255|unique:businesses,business_code,' . $business->id,
-            'business_name' => 'required|max:255',
-        ]);
-
-        $business->update($request->all());
-
-        return redirect()->route('business.index')->with('success', 'Doanh nghiệp đã được cập nhật thành công.');
-    }
-
-    public function destroy(Business $business)
-    {
-        $business->delete();
-        return redirect()->route('business.index')->with('success', 'Doanh nghiệp đã được xóa.');
+        return $this->businessService->deleteBusiness($id)
+            ? $this->success(null, 'Xóa doanh nghiệp thành công!')
+            : $this->error('doanh nghiệp không tồn tại hoặc không thể xóa!', 404);
     }
 }
