@@ -30,9 +30,9 @@ class BusinessController extends Controller
 
     /**
      * @OA\Get(
-     *     path="/api/business",
+     *     path="/api/businesses",
      *     summary="Lấy danh sách doanh nghiệp",
-     *     tags={"Business"},
+     *     tags={"Businesses"},
      *     security={{"bearerAuth": {}}},    
      *     @OA\Parameter(
      *         name="search",
@@ -69,9 +69,9 @@ class BusinessController extends Controller
 
     /**
      * @OA\Post(
-     *     path="/api/business",
+     *     path="/api/businesses",
      *     summary="Thêm doanh nghiệp",
-     *     tags={"Business"},
+     *     tags={"Businesses"},
      *     security={{"bearerAuth": {}}},
      *     @OA\RequestBody(
      *         required=true,
@@ -95,9 +95,9 @@ class BusinessController extends Controller
 
     /**
      * @OA\Get(
-     *     path="/api/business/{id}",
+     *     path="/api/businesses/{id}",
      *     summary="Lấy thông tin doanh nghiệp",
-     *     tags={"Business"},
+     *     tags={"Businesses"},
      *     security={{"bearerAuth": {}}},
      *     @OA\Parameter(
      *         name="id",
@@ -125,9 +125,9 @@ class BusinessController extends Controller
 
     /**
      * @OA\Put(
-     *     path="/api/business/{id}",
+     *     path="/api/businesses/{id}",
      *     summary="Cập nhật doanh nghiệp",
-     *     tags={"Business"},
+     *     tags={"Businesses"},
      *     security={{"bearerAuth": {}}},
      *     @OA\Parameter(
      *         name="id",
@@ -162,9 +162,9 @@ class BusinessController extends Controller
 
     /**
      * @OA\Delete(
-     *     path="/api/business/{id}",
+     *     path="/api/businesses/{id}",
      *     summary="Xóa doanh nghiệp",
-     *     tags={"Business"},
+     *     tags={"Businesses"},
      *     security={{"bearerAuth": {}}},
      *     @OA\Parameter(
      *         name="id",

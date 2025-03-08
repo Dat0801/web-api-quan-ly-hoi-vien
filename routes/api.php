@@ -81,7 +81,7 @@ Route::middleware(['auth:sanctum', 'token.expiration'])->group(function () {
         Route::delete('/{id}', [FieldController::class, 'destroy']);
     });
 
-    Route::prefix('business')->group(callback: function () {
+    Route::prefix('businesses')->group(callback: function () {
         Route::get('/', [BusinessController::class, 'index']);
         Route::post('/', [BusinessController::class, 'store']);
         Route::get('/{id}', [BusinessController::class, 'show']);

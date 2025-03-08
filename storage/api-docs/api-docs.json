@@ -111,13 +111,13 @@
                 ]
             }
         },
-        "/api/business": {
+        "/api/businesses": {
             "get": {
                 "tags": [
-                    "Business"
+                    "Businesses"
                 ],
                 "summary": "Lấy danh sách doanh nghiệp",
-                "operationId": "26dbe1770e81c119c7275e66f251f994",
+                "operationId": "a32681f5641393dc563f91635441f481",
                 "parameters": [
                     {
                         "name": "search",
@@ -171,10 +171,10 @@
             },
             "post": {
                 "tags": [
-                    "Business"
+                    "Businesses"
                 ],
                 "summary": "Thêm doanh nghiệp",
-                "operationId": "4714f3ec814bf207176bb5264183e7a0",
+                "operationId": "e9a91974d8f90ec65714149e64fa5751",
                 "requestBody": {
                     "required": true,
                     "content": {
@@ -204,13 +204,13 @@
                 ]
             }
         },
-        "/api/business/{id}": {
+        "/api/businesses/{id}": {
             "get": {
                 "tags": [
-                    "Business"
+                    "Businesses"
                 ],
                 "summary": "Lấy thông tin doanh nghiệp",
-                "operationId": "97084bfb2c9dfb011102fd498abbfc60",
+                "operationId": "cf4c3c58d2528d40a71120631779349a",
                 "parameters": [
                     {
                         "name": "id",
@@ -245,10 +245,10 @@
             },
             "put": {
                 "tags": [
-                    "Business"
+                    "Businesses"
                 ],
                 "summary": "Cập nhật doanh nghiệp",
-                "operationId": "f809cda66486896031320636f03e72da",
+                "operationId": "de86b12fdb48614fd40048e3bc88ed04",
                 "parameters": [
                     {
                         "name": "id",
@@ -293,10 +293,10 @@
             },
             "delete": {
                 "tags": [
-                    "Business"
+                    "Businesses"
                 ],
                 "summary": "Xóa doanh nghiệp",
-                "operationId": "6ec006a54e5457bb7fa629437a310a3a",
+                "operationId": "00f251d6b7420c6bdc936a0194f6fbf0",
                 "parameters": [
                     {
                         "name": "id",
@@ -314,6 +314,218 @@
                     },
                     "404": {
                         "description": "doanh nghiệp không tồn tại hoặc không thể xóa"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/certificates": {
+            "get": {
+                "tags": [
+                    "Certificates"
+                ],
+                "summary": "Lấy danh sách chứng chỉ",
+                "operationId": "e43d041a83917810db898ae7f77b9d59",
+                "parameters": [
+                    {
+                        "name": "search",
+                        "in": "query",
+                        "description": "Tìm kiếm theo tên chứng chỉ",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "Số trang",
+                        "schema": {
+                            "type": "integer",
+                            "default": 1
+                        }
+                    },
+                    {
+                        "name": "per_page",
+                        "in": "query",
+                        "description": "Số lượng chứng chỉ trên mỗi trang",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "default": 10
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Danh sách chứng chỉ",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/Certificate"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Certificates"
+                ],
+                "summary": "Thêm chứng chỉ",
+                "operationId": "fb82680babc38545d9abd49ced5953e8",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/StoreCertificateRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "chứng chỉ đã được tạo",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Certificate"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/certificates/{id}": {
+            "get": {
+                "tags": [
+                    "Certificates"
+                ],
+                "summary": "Lấy thông tin chứng chỉ",
+                "operationId": "dc63fe77afcbaf93491b1fb03ec7ad1d",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID của chứng chỉ",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Thông tin chứng chỉ",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Certificate"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "chứng chỉ không tồn tại"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "put": {
+                "tags": [
+                    "Certificates"
+                ],
+                "summary": "Cập nhật chứng chỉ",
+                "operationId": "5d8fc4e9edf03c22e337ed6dfe0a3fad",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID của chứng chỉ",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/StoreCertificateRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Cập nhật chứng chỉ thành công",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Certificate"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "chứng chỉ không tồn tại"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Certificates"
+                ],
+                "summary": "Xóa chứng chỉ",
+                "operationId": "0f51a46193903797a8d42947720fdeae",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID của chứng chỉ",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Xóa chứng chỉ thành công"
+                    },
+                    "404": {
+                        "description": "chứng chỉ không tồn tại hoặc không thể xóa"
                     }
                 },
                 "security": [
@@ -1473,6 +1685,32 @@
                 },
                 "type": "object"
             },
+            "StoreCertificateRequest": {
+                "title": "Store Certificate Request",
+                "description": "Yêu cầu tạo mới ngành nghề",
+                "required": [
+                    "certificate_code",
+                    "certificate_name"
+                ],
+                "properties": {
+                    "certificate_code": {
+                        "type": "string",
+                        "maxLength": 50,
+                        "example": "IT"
+                    },
+                    "certificate_name": {
+                        "type": "string",
+                        "maxLength": 255,
+                        "example": "Công nghệ thông tin"
+                    },
+                    "description": {
+                        "type": "string",
+                        "example": "Ngành liên quan đến phần mềm, phần cứng và công nghệ",
+                        "nullable": true
+                    }
+                },
+                "type": "object"
+            },
             "StoreDocumentRequest": {
                 "title": "Store Document Request",
                 "description": "Yêu cầu lưu tài liệu mới",
@@ -1771,6 +2009,29 @@
                 },
                 "type": "object"
             },
+            "Certificate": {
+                "title": "Certificate",
+                "description": "Thông tin ngành nghề",
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "certificate_code": {
+                        "type": "string",
+                        "example": "IT"
+                    },
+                    "certificate_name": {
+                        "type": "string",
+                        "example": "Công nghệ thông tin"
+                    },
+                    "description": {
+                        "type": "string",
+                        "example": "Ngành liên quan đến phần mềm, phần cứng và công nghệ"
+                    }
+                },
+                "type": "object"
+            },
             "Document": {
                 "title": "Document",
                 "description": "Chi tiết tài liệu",
@@ -2013,10 +2274,6 @@
             "description": "API xác thực người dùng"
         },
         {
-            "name": "Business",
-            "description": "Quản lý doanh nghiệp"
-        },
-        {
             "name": "Fields",
             "description": "Quản lý lĩnh vực"
         },
@@ -2039,6 +2296,14 @@
         {
             "name": "Roles",
             "description": "Quản lý vai trò"
+        },
+        {
+            "name": "Businesses",
+            "description": "Businesses"
+        },
+        {
+            "name": "Certificates",
+            "description": "Certificates"
         }
     ],
     "security": [
