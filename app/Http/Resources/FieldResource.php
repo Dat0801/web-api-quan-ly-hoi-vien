@@ -13,7 +13,6 @@ use Illuminate\Http\Resources\Json\JsonResource;
  *     @OA\Property(property="name", type="string", example="Phát triển phần mềm"),
  *     @OA\Property(property="description", type="string", example="Lĩnh vực chuyên về phát triển phần mềm, ứng dụng và hệ thống"),
  *     @OA\Property(property="industry_id", type="integer", example=2),
- *     @OA\Property(property="industry", ref="#/components/schemas/Industry")
  * )
  */
 class FieldResource extends JsonResource
@@ -26,7 +25,6 @@ class FieldResource extends JsonResource
             'name' => $this->name,
             'description' => $this->description,
             'industry_id' => $this->industry_id,
-            'industry' => new IndustryResource($this->whenLoaded('industry')),
         ];
     }
 }

@@ -7,20 +7,12 @@ use Illuminate\Foundation\Http\FormRequest;
 /**
  * @OA\Schema(
  *     schema="StoreFieldRequest",
+ *     title="Store Field Request",
  *     required={"name", "code", "industry_id"},
  *     @OA\Property(property="name", type="string", example="Lập trình phần mềm", description="Tên của lĩnh vực"),
  *     @OA\Property(property="code", type="string", example="IT-SW", description="Mã lĩnh vực, phải là duy nhất"),
  *     @OA\Property(property="description", type="string", example="Lĩnh vực phát triển phần mềm", description="Mô tả lĩnh vực"),
  *     @OA\Property(property="industry_id", type="integer", example=1, description="ID của ngành nghề liên quan"),
- *     @OA\Property(
- *         property="sub_groups",
- *         type="array",
- *         @OA\Items(
- *             type="object",
- *             @OA\Property(property="name", type="string", example="Frontend Development", description="Tên nhóm con"),
- *             @OA\Property(property="description", type="string", example="Phát triển giao diện người dùng", description="Mô tả nhóm con")
- *         )
- *     )
  * )
  */
 class StoreFieldRequest extends FormRequest

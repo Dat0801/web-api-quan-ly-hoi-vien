@@ -6,10 +6,12 @@ use App\Interfaces\CertificateRepositoryInterface;
 use App\Interfaces\BusinessRepositoryInterface;
 use App\Interfaces\FieldRepositoryInterface;
 use App\Interfaces\MarketRepositoryInterface;
+use App\Interfaces\OrganizationRepositoryInterface;
 use App\Repositories\CertificateRepository;
 use App\Repositories\BusinessRepository;
 use App\Repositories\FieldRepository;
 use App\Repositories\MarketRepository;
+use App\Repositories\OrganizationRepository;
 use Illuminate\Support\ServiceProvider;
 use App\Repositories\BaseRepository;
 use App\Repositories\UserRepository;
@@ -41,6 +43,7 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(FieldRepositoryInterface::class, FieldRepository::class);
         $this->app->bind(BusinessRepositoryInterface::class, BusinessRepository::class);
         $this->app->bind(CertificateRepositoryInterface::class, CertificateRepository::class);
+        $this->app->bind(OrganizationRepositoryInterface::class, OrganizationRepository::class);
     }
 
     /**

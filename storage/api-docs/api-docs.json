@@ -553,18 +553,6 @@
                         }
                     },
                     {
-                        "name": "include",
-                        "in": "query",
-                        "description": "Bao gồm thông tin ngành nghề (giá trị: industry)",
-                        "required": false,
-                        "schema": {
-                            "type": "string",
-                            "enum": [
-                                "industry"
-                            ]
-                        }
-                    },
-                    {
                         "name": "page",
                         "in": "query",
                         "description": "Số trang",
@@ -1184,6 +1172,218 @@
                 ]
             }
         },
+        "/api/organizations": {
+            "get": {
+                "tags": [
+                    "Organizations"
+                ],
+                "summary": "Lấy danh sách tổ chức",
+                "operationId": "6de2385da489416d3cb1d76997bcd1b9",
+                "parameters": [
+                    {
+                        "name": "search",
+                        "in": "query",
+                        "description": "Tìm kiếm theo tên tổ chức",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "Số trang",
+                        "schema": {
+                            "type": "integer",
+                            "default": 1
+                        }
+                    },
+                    {
+                        "name": "per_page",
+                        "in": "query",
+                        "description": "Số lượng tổ chức trên mỗi trang",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "default": 10
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Danh sách tổ chức",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/Organization"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Organizations"
+                ],
+                "summary": "Thêm tổ chức",
+                "operationId": "83f5302e4f2ff71805c1116d91330c40",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/StoreOrganizationRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "tổ chức đã được tạo",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Organization"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/organizations/{id}": {
+            "get": {
+                "tags": [
+                    "Organizations"
+                ],
+                "summary": "Lấy thông tin tổ chức",
+                "operationId": "66a42016507a4f4c8789d3304d7b1324",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID của tổ chức",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Thông tin tổ chức",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Organization"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "tổ chức không tồn tại"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "put": {
+                "tags": [
+                    "Organizations"
+                ],
+                "summary": "Cập nhật tổ chức",
+                "operationId": "690ba095c638038db230e8e954ee5b47",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID của tổ chức",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/StoreOrganizationRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Cập nhật tổ chức thành công",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Organization"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "tổ chức không tồn tại"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Organizations"
+                ],
+                "summary": "Xóa tổ chức",
+                "operationId": "dbaa7d07a61eff65c627c21d937a9d36",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID của tổ chức",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Xóa tổ chức thành công"
+                    },
+                    "404": {
+                        "description": "tổ chức không tồn tại hoặc không thể xóa"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
         "/api/documents": {
             "get": {
                 "tags": [
@@ -1728,6 +1928,7 @@
                 "type": "object"
             },
             "StoreFieldRequest": {
+                "title": "Store Field Request",
                 "required": [
                     "name",
                     "code",
@@ -1753,24 +1954,6 @@
                         "description": "ID của ngành nghề liên quan",
                         "type": "integer",
                         "example": 1
-                    },
-                    "sub_groups": {
-                        "type": "array",
-                        "items": {
-                            "properties": {
-                                "name": {
-                                    "description": "Tên nhóm con",
-                                    "type": "string",
-                                    "example": "Frontend Development"
-                                },
-                                "description": {
-                                    "description": "Mô tả nhóm con",
-                                    "type": "string",
-                                    "example": "Phát triển giao diện người dùng"
-                                }
-                            },
-                            "type": "object"
-                        }
                     }
                 },
                 "type": "object"
@@ -1821,6 +2004,32 @@
                     "description": {
                         "type": "string",
                         "example": "Chợ nổi tiếng tại TP.HCM",
+                        "nullable": true
+                    }
+                },
+                "type": "object"
+            },
+            "StoreOrganizationRequest": {
+                "title": "Store Organization Request",
+                "description": "Yêu cầu tạo mới tổ chức",
+                "required": [
+                    "organization_code",
+                    "organization_name"
+                ],
+                "properties": {
+                    "organization_code": {
+                        "type": "string",
+                        "maxLength": 50,
+                        "example": "IT"
+                    },
+                    "organization_name": {
+                        "type": "string",
+                        "maxLength": 255,
+                        "example": "Công nghệ thông tin"
+                    },
+                    "description": {
+                        "type": "string",
+                        "example": "Ngành liên quan đến phần mềm, phần cứng và công nghệ",
                         "nullable": true
                     }
                 },
@@ -2078,9 +2287,6 @@
                     "industry_id": {
                         "type": "integer",
                         "example": 2
-                    },
-                    "industry": {
-                        "$ref": "#/components/schemas/Industry"
                     }
                 },
                 "type": "object"
@@ -2128,6 +2334,29 @@
                         "type": "string",
                         "example": "Chợ nổi tiếng tại TP.HCM",
                         "nullable": true
+                    }
+                },
+                "type": "object"
+            },
+            "Organization": {
+                "title": "Organization",
+                "description": "Thông tin tổ chức",
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "organization_code": {
+                        "type": "string",
+                        "example": "IT"
+                    },
+                    "organization_name": {
+                        "type": "string",
+                        "example": "Công nghệ thông tin"
+                    },
+                    "description": {
+                        "type": "string",
+                        "example": "Ngành liên quan đến phần mềm, phần cứng và công nghệ"
                     }
                 },
                 "type": "object"
@@ -2304,6 +2533,10 @@
         {
             "name": "Certificates",
             "description": "Certificates"
+        },
+        {
+            "name": "Organizations",
+            "description": "Organizations"
         }
     ],
     "security": [

@@ -42,13 +42,6 @@ class FieldController extends Controller
      *         @OA\Schema(type="string")
      *     ),
      *     @OA\Parameter(
-     *         name="include",
-     *         in="query",
-     *         description="Bao gồm thông tin ngành nghề (giá trị: industry)",
-     *         required=false,
-     *         @OA\Schema(type="string", enum={"industry"})
-     *     ),
-     *     @OA\Parameter(
      *         name="page",
      *         in="query",
      *         description="Số trang",
@@ -73,8 +66,7 @@ class FieldController extends Controller
     {
         $search = $request->query('search');
         $perPage = (int) $request->query('per_page', 10);
-        $include = $request->query('include');
-        $fields = $this->fieldService->getFields($search, $perPage, $include);
+        $fields = $this->fieldService->getFields($search, $perPage);
         return $this->success(FieldResource::collection($fields), "Lấy danh sách lĩnh vực thành công");
     }
 

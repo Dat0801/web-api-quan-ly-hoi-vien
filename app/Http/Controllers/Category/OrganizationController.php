@@ -3,88 +3,190 @@
 namespace App\Http\Controllers\Category;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\StoreOrganizationRequest;
+use App\Http\Requests\UpdateOrganizationRequest;
+use App\Http\Resources\OrganizationResource;
+use App\Services\OrganizationService;
 use Illuminate\Http\Request;
-use App\Models\Organization;
+use Illuminate\Http\JsonResponse;
+use App\Traits\ApiResponse;
 
+/**
+ * @OA\Tag(
+ *     name="Organization",
+ *     description="Quản lý tổ chức"
+ * )
+ */
 class OrganizationController extends Controller
 {
-    //
-    public function index(Request $request)
-    {
-        $search = $request->input('search');
-        $organizations = Organization::query()
-            ->when($search, function ($query, $search) {
-                $query->where('organization_name', 'like', '%' . $search . '%')
-                      ->orWhere('organization_code', 'like', '%' . $search . '%');
-            })
-            ->paginate(perPage: 3);
+    use ApiResponse;
 
-        return view('category.organization.index', compact('organizations', 'search'));
+    protected $organizationService;
+
+    public function __construct(OrganizationService $organizationService)
+    {
+        $this->organizationService = $organizationService;
     }
 
     /**
-     * Hiển thị form tạo mới tổ chức.
+     * @OA\Get(
+     *     path="/api/organizations",
+     *     summary="Lấy danh sách tổ chức",
+     *     tags={"Organizations"},
+     *     security={{"bearerAuth": {}}},    
+     *     @OA\Parameter(
+     *         name="search",
+     *         in="query",
+     *         description="Tìm kiếm theo tên tổ chức",
+     *         required=false,
+     *         @OA\Schema(type="string")
+     *     ),
+     *     @OA\Parameter(
+     *         name="page",
+     *         in="query",
+     *         description="Số trang",
+     *         @OA\Schema(type="integer", default=1)
+     *     ),
+     *     @OA\Parameter(
+     *         name="per_page",
+     *         in="query",
+     *         description="Số lượng tổ chức trên mỗi trang",
+     *         required=false,
+     *         @OA\Schema(type="integer", default=10)
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Danh sách tổ chức",
+     *         @OA\JsonContent(type="array", @OA\Items(ref="#/components/schemas/Organization"))
+     *     )
+     * )
      */
-    public function create()
+    public function index(Request $request): JsonResponse
     {
-        return view('category.organization.create');
+        $organization = $this->organizationService->getOrganization($request->search, $request->per_page);
+        return $this->success(OrganizationResource::collection($organization), "Lấy danh sách tổ chức thành công");
     }
 
     /**
-     * Lưu tổ chức mới vào cơ sở dữ liệu.
+     * @OA\Post(
+     *     path="/api/organizations",
+     *     summary="Thêm tổ chức",
+     *     tags={"Organizations"},
+     *     security={{"bearerAuth": {}}},
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\MediaType(
+     *             mediaType="application/json",
+     *             @OA\Schema(ref="#/components/schemas/StoreOrganizationRequest")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=201,
+     *         description="tổ chức đã được tạo",
+     *         @OA\JsonContent(ref="#/components/schemas/Organization")
+     *     )
+     * )
      */
-    public function store(Request $request)
+    public function store(StoreOrganizationRequest $request): JsonResponse
     {
-        $validatedData = $request->validate([
-            'organization_code' => 'required|unique:organizations|max:50',
-            'organization_name' => 'required|max:100',
-            'description' => 'nullable|max:500',
-        ]);
-
-        Organization::create($validatedData);
-
-        return redirect()->route('organization.index')->with('success', 'Tổ chức đã được thêm thành công!');
+        $organization = $this->organizationService->createOrganization($request->validated());
+        return $this->success(new OrganizationResource($organization), 'tổ chức đã được tạo thành công!', 201);
     }
 
     /**
-     * Hiển thị chi tiết tổ chức.
+     * @OA\Get(
+     *     path="/api/organizations/{id}",
+     *     summary="Lấy thông tin tổ chức",
+     *     tags={"Organizations"},
+     *     security={{"bearerAuth": {}}},
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         description="ID của tổ chức",
+     *         required=true,
+     *         @OA\Schema(type="integer")
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Thông tin tổ chức",
+     *         @OA\JsonContent(ref="#/components/schemas/Organization")
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="tổ chức không tồn tại"
+     *     )
+     * )
      */
-    public function show(Organization $organization)
+    public function show($id): JsonResponse
     {
-        return view('category.organization.show', compact('organization'));
+        $organization = $this->organizationService->getOrganizationById($id);
+        return $organization ? $this->success(new OrganizationResource($organization)) : $this->error('tổ chức không tồn tại!', 404);
     }
 
     /**
-     * Hiển thị form chỉnh sửa tổ chức.
+     * @OA\Put(
+     *     path="/api/organizations/{id}",
+     *     summary="Cập nhật tổ chức",
+     *     tags={"Organizations"},
+     *     security={{"bearerAuth": {}}},
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         description="ID của tổ chức",
+     *         required=true,
+     *         @OA\Schema(type="integer")
+     *     ),
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\MediaType(
+     *             mediaType="application/json",
+     *             @OA\Schema(ref="#/components/schemas/StoreOrganizationRequest")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Cập nhật tổ chức thành công",
+     *         @OA\JsonContent(ref="#/components/schemas/Organization")
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="tổ chức không tồn tại"
+     *     )
+     * )
      */
-    public function edit(Organization $organization)
+    public function update(UpdateOrganizationRequest $request, $id): JsonResponse
     {
-        return view('category.organization.edit', compact('organization'));
+        $organization = $this->organizationService->updateOrganization($id, $request->validated());
+        return $this->success(new OrganizationResource($organization), 'Cập nhật tổ chức thành công!');
     }
 
     /**
-     * Cập nhật thông tin tổ chức trong cơ sở dữ liệu.
+     * @OA\Delete(
+     *     path="/api/organizations/{id}",
+     *     summary="Xóa tổ chức",
+     *     tags={"Organizations"},
+     *     security={{"bearerAuth": {}}},
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         description="ID của tổ chức",
+     *         required=true,
+     *         @OA\Schema(type="integer")
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Xóa tổ chức thành công"
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="tổ chức không tồn tại hoặc không thể xóa"
+     *     )
+     * )
      */
-    public function update(Request $request, Organization $organization)
+    public function destroy($id): JsonResponse
     {
-        $validatedData = $request->validate([
-            'organization_code' => 'required|unique:organizations,organization_code,' . $organization->id . '|max:50',
-            'organization_name' => 'required|max:100',
-            'description' => 'nullable|max:500',
-        ]);
-
-        $organization->update($validatedData);
-
-        return redirect()->route('organization.index')->with('success', 'Tổ chức đã được cập nhật thành công!');
-    }
-
-    /**
-     * Xóa tổ chức khỏi cơ sở dữ liệu.
-     */
-    public function destroy(Organization $organization)
-    {
-        $organization->delete();
-
-        return redirect()->route('organization.index')->with('success', 'Tổ chức đã được xóa thành công!');
+        return $this->organizationService->deleteOrganization($id)
+            ? $this->success(null, 'Xóa tổ chức thành công!')
+            : $this->error('tổ chức không tồn tại hoặc không thể xóa!', 404);
     }
 }

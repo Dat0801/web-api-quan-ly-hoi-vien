@@ -12,16 +12,12 @@ class FieldRepository extends BaseRepository implements FieldRepositoryInterface
         parent::__construct($model);
     }
 
-    public function getFields(?string $search, int $perPage = 10, ?string $include = null)
+    public function getFields(?string $search, int $perPage = 10)
     {
         $query = Field::query();
 
         if (!empty($search)) {
             $query->where('name', 'like', '%' . $search . '%');
-        }
-
-        if ($include === 'industry') {
-            $query->with('industry');
         }
 
         return $query->paginate($perPage);

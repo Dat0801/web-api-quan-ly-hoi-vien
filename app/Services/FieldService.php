@@ -23,9 +23,9 @@ class FieldService
      * @param int $perPage
      * @return LengthAwarePaginator
      */
-    public function getFields(?string $search, int $perPage = 10, ?string $include = null): LengthAwarePaginator
+    public function getFields(?string $search, int $perPage = 10): LengthAwarePaginator
     {
-        return $this->fieldRepository->getFields($search, $perPage, $include);
+        return $this->fieldRepository->getFields($search, $perPage);
     }
 
     /**

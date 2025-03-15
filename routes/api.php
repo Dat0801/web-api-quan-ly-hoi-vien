@@ -5,6 +5,7 @@ use App\Http\Controllers\Category\CertificateController;
 use App\Http\Controllers\Category\FieldController;
 use App\Http\Controllers\Category\IndustryController;
 use App\Http\Controllers\Category\MarketController;
+use App\Http\Controllers\Category\OrganizationController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
@@ -23,8 +24,6 @@ use App\Http\Controllers\User\RoleController;
 | is assigned the "api" middleware group. Enjoy building your API!
 |
 */
-
-
 
 Route::post('/login', [AuthController::class, 'login'])->name('login');
 
@@ -95,6 +94,14 @@ Route::middleware(['auth:sanctum', 'token.expiration'])->group(function () {
         Route::get('/{id}', [CertificateController::class, 'show']);
         Route::put('/{id}', [CertificateController::class, 'update']);
         Route::delete('/{id}', [CertificateController::class, 'destroy']);
+    });
+
+    Route::prefix('organizations')->group(callback: function () {
+        Route::get('/', [OrganizationController::class, 'index']);
+        Route::post('/', [OrganizationController::class, 'store']);
+        Route::get('/{id}', [OrganizationController::class, 'show']);
+        Route::put('/{id}', [OrganizationController::class, 'update']);
+        Route::delete('/{id}', [OrganizationController::class, 'destroy']);
     });
 
     Route::post('/logout', [AuthController::class, 'logout']);
