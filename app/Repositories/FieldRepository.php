@@ -17,7 +17,12 @@ class FieldRepository extends BaseRepository implements FieldRepositoryInterface
         $query = Field::query();
 
         if (!empty($search)) {
-            $query->where('name', 'like', '%' . $search . '%');
+            $query->where(function ($query) use ($search) {
+                $query->where('name', 'like', '%' . $search . '%')
+                      ->orWhere('id', 'like', '%' . $search . '%')
+                      ->orWhere('code', 'like', '%' . $search . '%')
+                      ->orWhere('description', 'like', '%' . $search . '%');
+            });
         }
 
         return $query->paginate($perPage);

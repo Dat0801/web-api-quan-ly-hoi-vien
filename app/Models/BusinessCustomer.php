@@ -2,12 +2,14 @@
 
 namespace App\Models;
 
+use App\Traits\OptimizesQueries;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class BusinessCustomer extends Model
 {
-    use HasFactory;
+    use HasFactory, OptimizesQueries;
+
     protected $fillable = [
         'login_code',
         'card_code',
@@ -39,6 +41,13 @@ class BusinessCustomer extends Model
         'leader_email',
         'club_id',
         'status',
+    ];
+
+    protected $casts = [
+        'established_date' => 'date',
+        'charter_capital' => 'decimal:2',
+        'pre_membership_revenue' => 'decimal:2',
+        'status' => 'boolean',
     ];
 
     public function industry()

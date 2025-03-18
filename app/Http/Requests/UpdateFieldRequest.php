@@ -19,17 +19,13 @@ class UpdateFieldRequest extends FormRequest
      */
     public function rules(): array
     {
-        $fieldId = $this->route('field'); // Lấy ID của field từ request URL
+        $fieldId = $this->route('id'); 
 
         return [
             'name' => 'required|string|max:255',
             'code' => "required|string|max:50|unique:fields,code,{$fieldId}",
             'description' => 'nullable|string|max:1000',
             'industry_id' => 'required|exists:industries,id',
-            'sub_groups' => 'nullable|array',
-            'sub_groups.*.id' => 'nullable|exists:sub_groups,id',
-            'sub_groups.*.name' => 'required|string|max:255',
-            'sub_groups.*.description' => 'nullable|string|max:1000',
         ];
     }
 
