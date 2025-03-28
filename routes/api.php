@@ -13,7 +13,7 @@ use App\Http\Controllers\DocumentController;
 use App\Http\Resources\UserResource;
 use App\Http\Controllers\User\AccountController;
 use App\Http\Controllers\User\RoleController;
-
+use App\Http\Controllers\Category\TargetCustomerGroupController;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -102,6 +102,14 @@ Route::middleware(['auth:sanctum', 'token.expiration'])->group(function () {
         Route::get('/{id}', [OrganizationController::class, 'show']);
         Route::put('/{id}', [OrganizationController::class, 'update']);
         Route::delete('/{id}', [OrganizationController::class, 'destroy']);
+    });
+
+    Route::prefix('target-customer-groups')->group(callback: function () {
+        Route::get('/', [TargetCustomerGroupController::class, 'index']);
+        Route::post('/', [TargetCustomerGroupController::class, 'store']);
+        Route::get('/{id}', [TargetCustomerGroupController::class, 'show']);
+        Route::put('/{id}', [TargetCustomerGroupController::class, 'update']);
+        Route::delete('/{id}', [TargetCustomerGroupController::class, 'destroy']);
     });
 
     Route::post('/logout', [AuthController::class, 'logout']);

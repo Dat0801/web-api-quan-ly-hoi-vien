@@ -1384,6 +1384,218 @@
                 ]
             }
         },
+        "/api/target-customer-groups": {
+            "get": {
+                "tags": [
+                    "TargetCustomerGroups"
+                ],
+                "summary": "Lấy danh sách nhóm khách hàng",
+                "operationId": "f93b73fe8fa4d4d872d335332b5c4f73",
+                "parameters": [
+                    {
+                        "name": "search",
+                        "in": "query",
+                        "description": "Tìm kiếm theo tên nhóm khách hàng",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "Số trang",
+                        "schema": {
+                            "type": "integer",
+                            "default": 1
+                        }
+                    },
+                    {
+                        "name": "per_page",
+                        "in": "query",
+                        "description": "Số lượng nhóm khách hàng trên mỗi trang",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "default": 10
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Danh sách nhóm khách hàng",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/TargetCustomerGroup"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "TargetCustomerGroups"
+                ],
+                "summary": "Thêm nhóm khách hàng",
+                "operationId": "0c64f8b018d1fe03561b3fa8f30f9d4b",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/StoreTargetCustomerGroupRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "nhóm khách hàng đã được tạo",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/TargetCustomerGroup"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/target-customer-groups/{id}": {
+            "get": {
+                "tags": [
+                    "TargetCustomerGroups"
+                ],
+                "summary": "Lấy thông tin nhóm khách hàng",
+                "operationId": "65aa94f6064c14deb1a5e34b099227c8",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID của nhóm khách hàng",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Thông tin nhóm khách hàng",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/TargetCustomerGroup"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "nhóm khách hàng không tồn tại"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "put": {
+                "tags": [
+                    "TargetCustomerGroups"
+                ],
+                "summary": "Cập nhật nhóm khách hàng",
+                "operationId": "8b5536edfd7ce3f842fb965a2c8043a8",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID của nhóm khách hàng",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/StoreTargetCustomerGroupRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Cập nhật nhóm khách hàng thành công",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/TargetCustomerGroup"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "nhóm khách hàng không tồn tại"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "TargetCustomerGroups"
+                ],
+                "summary": "Xóa nhóm khách hàng",
+                "operationId": "8199dfabff7ad27ee6b56175d03e105e",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID của nhóm khách hàng",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Xóa nhóm khách hàng thành công"
+                    },
+                    "404": {
+                        "description": "nhóm khách hàng không tồn tại hoặc không thể xóa"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
         "/api/documents": {
             "get": {
                 "tags": [
@@ -2065,6 +2277,32 @@
                 },
                 "type": "object"
             },
+            "StoreTargetCustomerGroupRequest": {
+                "title": "Store Target Customer Group Request",
+                "description": "Yêu cầu tạo mới nhóm khách hàng",
+                "required": [
+                    "group_code",
+                    "group_name"
+                ],
+                "properties": {
+                    "group_code": {
+                        "type": "string",
+                        "maxLength": 50,
+                        "example": "IT"
+                    },
+                    "group_name": {
+                        "type": "string",
+                        "maxLength": 255,
+                        "example": "Công nghệ thông tin"
+                    },
+                    "description": {
+                        "type": "string",
+                        "example": "Ngành liên quan đến phần mềm, phần cứng và công nghệ",
+                        "nullable": true
+                    }
+                },
+                "type": "object"
+            },
             "StoreUserRequest": {
                 "title": "Store User Request",
                 "description": "Yêu cầu tạo mới người dùng",
@@ -2420,6 +2658,29 @@
                 },
                 "type": "object"
             },
+            "TargetCustomerGroup": {
+                "title": "TargetCustomerGroup",
+                "description": "Thông tin nhóm khách hàng",
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "group_code": {
+                        "type": "string",
+                        "example": "IT"
+                    },
+                    "group_name": {
+                        "type": "string",
+                        "example": "Công nghệ thông tin"
+                    },
+                    "description": {
+                        "type": "string",
+                        "example": "Ngành liên quan đến phần mềm, phần cứng và công nghệ"
+                    }
+                },
+                "type": "object"
+            },
             "User": {
                 "title": "User",
                 "description": "Thông tin người dùng",
@@ -2513,6 +2774,10 @@
         {
             "name": "Markets",
             "description": "Quản lý thị trường"
+        },
+        {
+            "name": "TargetCustomerGroups",
+            "description": "Quản lý nhóm khách hàng"
         },
         {
             "name": "Documents",

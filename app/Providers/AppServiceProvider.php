@@ -22,7 +22,9 @@ use App\Interfaces\UserRepositoryInterface;
 use App\Interfaces\RoleRepositoryInterface;
 use App\Interfaces\DocumentRepositoryInterface;
 use App\Interfaces\IndustryRepositoryInterface;
+use App\Interfaces\TargetCustomerGroupRepositoryInterface;  
 use App\Repositories\IndustryRepository;
+use App\Repositories\TargetCustomerGroupRepository;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -44,6 +46,7 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(BusinessRepositoryInterface::class, BusinessRepository::class);
         $this->app->bind(CertificateRepositoryInterface::class, CertificateRepository::class);
         $this->app->bind(OrganizationRepositoryInterface::class, OrganizationRepository::class);
+        $this->app->bind(TargetCustomerGroupRepositoryInterface::class, TargetCustomerGroupRepository::class);
     }
 
     /**
