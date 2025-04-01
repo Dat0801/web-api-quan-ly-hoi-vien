@@ -25,6 +25,8 @@ use App\Interfaces\IndustryRepositoryInterface;
 use App\Interfaces\TargetCustomerGroupRepositoryInterface;  
 use App\Repositories\IndustryRepository;
 use App\Repositories\TargetCustomerGroupRepository;
+use App\Interfaces\BoardCustomerRepositoryInterface;
+use App\Repositories\BoardCustomerRepository;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -47,6 +49,7 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(CertificateRepositoryInterface::class, CertificateRepository::class);
         $this->app->bind(OrganizationRepositoryInterface::class, OrganizationRepository::class);
         $this->app->bind(TargetCustomerGroupRepositoryInterface::class, TargetCustomerGroupRepository::class);
+        $this->app->bind(BoardCustomerRepositoryInterface::class, BoardCustomerRepository::class);
     }
 
     /**

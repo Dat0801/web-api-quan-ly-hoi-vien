@@ -6,6 +6,7 @@ use App\Http\Controllers\Category\FieldController;
 use App\Http\Controllers\Category\IndustryController;
 use App\Http\Controllers\Category\MarketController;
 use App\Http\Controllers\Category\OrganizationController;
+use App\Http\Controllers\Customer\BoardCustomerController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
@@ -110,6 +111,14 @@ Route::middleware(['auth:sanctum', 'token.expiration'])->group(function () {
         Route::get('/{id}', [TargetCustomerGroupController::class, 'show']);
         Route::put('/{id}', [TargetCustomerGroupController::class, 'update']);
         Route::delete('/{id}', [TargetCustomerGroupController::class, 'destroy']);
+    });
+
+    Route::prefix('board-customers')->group(callback: function () {
+        Route::get('/', [BoardCustomerController::class, 'index']);
+        Route::post('/', [BoardCustomerController::class, 'store']);
+        Route::get('/{id}', [BoardCustomerController::class, 'show']);
+        Route::put('/{id}', [BoardCustomerController::class, 'update']);
+        Route::delete('/{id}', [BoardCustomerController::class, 'destroy']);
     });
 
     Route::post('/logout', [AuthController::class, 'logout']);

@@ -3,195 +3,119 @@
 namespace App\Http\Controllers\Customer;
 
 use App\Http\Controllers\Controller;
-use App\Models\MembershipFee;
+use App\Http\Requests\BoardCustomerRequest;
+use App\Services\BoardCustomerService;
+use App\Http\Resources\BoardCustomerResource;
 use Illuminate\Http\Request;
-use App\Models\BoardCustomer;
-use App\Models\Sponsorship;
+use OpenApi\Annotations as OA;
 
+/**
+ * @OA\Tag(name="Board Customers", description="Quản lý ban chấp hành")
+ */
 class BoardCustomerController extends Controller
 {
-    //
+    protected $boardCustomerService;
+
+    public function __construct(BoardCustomerService $boardCustomerService)
+    {
+        $this->boardCustomerService = $boardCustomerService;
+    }
+
+    /**
+     * @OA\Get(
+     *     path="/api/board-customers",
+     *     summary="Danh sách ban chấp hành",
+     *     tags={"Board Customers"},
+     *     @OA\Parameter(
+     *         name="search",
+     *         in="query",
+     *         required=false,
+     *         @OA\Schema(type="string")
+     *     ),
+     *     @OA\Parameter(
+     *         name="status",
+     *         in="query",
+     *         required=false,
+     *         @OA\Schema(type="string")
+     *     ),
+     *     @OA\Parameter(
+     *         name="perPage",
+     *         in="query",
+     *         required=false,
+     *         description="Số lượng bản ghi trên mỗi trang",
+     *         @OA\Schema(type="integer", default=10)
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Danh sách ban chấp hành"
+     *     )
+     * )
+     */
+
     public function index(Request $request)
     {
-        $search = $request->input('search');
-        $status = $request->input('status');
-
-        $customers = BoardCustomer::whereNull('club_id')
-            ->when($search, function ($query, $search) {
-                return $query->where(function ($q) use ($search) {
-                    $q->where('full_name', 'like', "%{$search}%")
-                        ->orWhere('login_code', 'like', "%{$search}%")
-                        ->orWhere('card_code', 'like', "%{$search}%");
-                });
-            })
-            ->when($status, function ($query, $status) {
-                if ($status == 'active') {
-                    return $query->where('status', 1);
-                } elseif ($status == 'inactive') {
-                    return $query->where('status', 0);
-                }
-            })
-            ->paginate(10);
-
-        return view('customer.board_customer.index', compact('customers', 'search', 'status'));
+        $customers = $this->boardCustomerService->getBoardCustomers($request->search, $request->perPage, $request->status);
+        return BoardCustomerResource::collection($customers);
     }
 
-    public function create()
+    /**
+     * @OA\Post(
+     *     path="/api/board-customers",
+     *     summary="Thêm mới ban chấp hành",
+     *     tags={"Board Customers"},
+     *     @OA\RequestBody(required=true, @OA\JsonContent(ref="#/components/schemas/BoardCustomerRequest")),
+     *     @OA\Response(response=201, description="Tạo thành công")
+     * )
+     */
+    public function store(BoardCustomerRequest $request)
     {
-        return view('customer.board_customer.create');
+        $customer = $this->boardCustomerService->createCustomer($request->validated());
+        return new BoardCustomerResource($customer);
     }
 
-    public function store(Request $request)
-    {
-        $request->validate([
-            'login_code' => 'required|unique:board_customers',
-            'card_code' => 'required|unique:board_customers',
-            'full_name' => 'required',
-            'birth_date' => 'nullable|date',
-            'gender' => 'required',
-            'phone' => 'required',
-            'email' => 'required|email',
-            'unit_name' => 'required',
-            'unit_position' => 'required',
-            'association_position' => 'required',
-            'term' => 'required',
-            'attendance_permission' => 'nullable|in:1,0',
-            'avatar' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
-        ]);
-
-        $avatarPath = null;
-        if ($request->hasFile('avatar')) {
-            $file = $request->file('avatar');
-            $fileName = $file->getClientOriginalName();
-            $uniqueFileName = uniqid() . '_' . $fileName;
-            $avatarPath = $file->storeAs('avatars', $uniqueFileName, 'public');
-        }
-
-        $attendancePermission = $request->attendance_permission == '1' ? true : false;
-
-        BoardCustomer::create([
-            'login_code' => $request->login_code,
-            'card_code' => $request->card_code,
-            'full_name' => $request->full_name,
-            'birth_date' => $request->birth_date,
-            'gender' => $request->gender,
-            'phone' => $request->phone,
-            'email' => $request->email,
-            'avatar' => $avatarPath,
-            'unit_name' => $request->unit_name,
-            'unit_position' => $request->unit_position,
-            'association_position' => $request->association_position,
-            'term' => $request->term,
-            'attendance_permission' => $attendancePermission,
-            'status' => true,
-        ]);
-
-        return redirect()->route('board_customer.index')->with('success', 'Thêm ban chấp hành thành công!');
-    }
-
+    /**
+     * @OA\Get(
+     *     path="/api/board-customers/{id}",
+     *     summary="Chi tiết ban chấp hành",
+     *     tags={"Board Customers"},
+     *     @OA\Parameter(name="id", in="path", required=true, @OA\Schema(type="integer")),
+     *     @OA\Response(response=200, description="Chi tiết ban chấp hành")
+     * )
+     */
     public function show($id)
     {
-        $customer = BoardCustomer::findOrFail($id);
-        return view('customer.board_customer.show', compact('customer'));
+        $customer = $this->boardCustomerService->findCustomer($id);
+        return new BoardCustomerResource($customer);
     }
 
-    public function edit($id)
+    /**
+     * @OA\Put(
+     *     path="/api/board-customers/{id}",
+     *     summary="Cập nhật ban chấp hành",
+     *     tags={"Board Customers"},
+     *     @OA\Parameter(name="id", in="path", required=true, @OA\Schema(type="integer")),
+     *     @OA\RequestBody(required=true, @OA\JsonContent(ref="#/components/schemas/BoardCustomerRequest")),
+     *     @OA\Response(response=200, description="Cập nhật thành công")
+     * )
+     */
+    public function update(BoardCustomerRequest $request, $id)
     {
-        $customer = BoardCustomer::findOrFail($id);
-        return view('customer.board_customer.edit', compact('customer'));
+        $customer = $this->boardCustomerService->updateCustomer($id, $request->validated());
+        return new BoardCustomerResource($customer);
     }
 
-    public function update(Request $request, $id)
-    {
-        $customer = BoardCustomer::findOrFail($id);
-
-        $request->validate([
-            'full_name' => 'required',
-            'birth_date' => 'nullable|date',
-            'gender' => 'required',
-            'phone' => 'required',
-            'unit_name' => 'required',
-            'unit_position' => 'required',
-            'association_position' => 'required',
-            'term' => 'required',
-            'attendance_permission' => 'boolean',
-            'avatar' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
-        ]);
-
-        if ($request->hasFile('avatar')) {
-            if ($customer->avatar) {
-                $oldAvatarPath = public_path('storage/' . $customer->avatar);
-                if (file_exists($oldAvatarPath)) {
-                    unlink($oldAvatarPath);
-                }
-            }
-
-            $file = $request->file('avatar');
-            $fileName = $file->getClientOriginalName();
-            $uniqueFileName = uniqid() . '_' . $fileName;
-            $avatarPath = $file->storeAs('avatars', $uniqueFileName, 'public');
-            $customer->avatar = $avatarPath;
-        }
-
-        $customer->update($request->except('avatar'));
-
-        return redirect()->route('board_customer.index')->with('success', 'Cập nhật ban chấp hành thành công!');
-    }
-
+    /**
+     * @OA\Delete(
+     *     path="/api/board-customers/{id}",
+     *     summary="Xóa ban chấp hành",
+     *     tags={"Board Customers"},
+     *     @OA\Parameter(name="id", in="path", required=true, @OA\Schema(type="integer")),
+     *     @OA\Response(response=200, description="Xóa thành công")
+     * )
+     */
     public function destroy($id)
     {
-        $customer = BoardCustomer::findOrFail($id);
-        $customer->delete();
-
-        return redirect()->route('board_customer.index')->with('success', 'Xóa ban chấp hành thành công!');
+        $this->boardCustomerService->deleteCustomer($id);
+        return response()->json(['message' => 'Deleted successfully'], 200);
     }
-
-    public function sponsorshipHistory($customerId, Request $request)
-    {
-        $customer = BoardCustomer::findOrFail($customerId);
-
-        $sponsorships = Sponsorship::where('sponsorable_id', $customerId)
-            ->where('sponsorable_type', BoardCustomer::class)
-            ->when($request->start_date && $request->end_date, function ($query) use ($request) {
-                return $query->whereBetween('sponsorship_date', [$request->start_date, $request->end_date]);
-            })
-            ->when($request->search, function ($query) use ($request) {
-                return $query->where('product', 'LIKE', "%{$request->search}%");
-            })
-            ->get();
-        $totalContribution = $sponsorships->sum('total_amount');
-        return view('customer.sponsorship_history', compact('customer', 'sponsorships', 'totalContribution'));
-    }
-
-    public function membershipFeeHistory(Request $request, $customerId)
-    {
-        $customer = BoardCustomer::findOrFail($customerId);
-
-        $query = MembershipFee::where('customer_id', $customerId)
-            ->where('customer_type', BoardCustomer::class);
-
-        $years = MembershipFee::where('customer_id', $customerId)
-            ->where('customer_type', BoardCustomer::class)
-            ->select('year')
-            ->distinct()
-            ->pluck('year')
-            ->sortDesc();
-
-        if ($request->has('year') && $request->year != '') {
-            $query->where('year', $request->year);
-        }
-
-        if ($request->has('search') && $request->search != '') {
-            $query->where(function ($q) use ($request) {
-                $q->where('content', 'like', '%' . $request->search . '%')
-                    ->orWhere('notes', 'like', '%' . $request->search . '%');
-            });
-        }
-
-        $fees = $query->orderBy('year', 'desc')->get();
-        $totalFeesPaid = $fees->sum('amount_paid');
-
-        return view('customer.membership_fee_history', compact('customer', 'fees', 'totalFeesPaid', 'years'));
-    }
-
 }

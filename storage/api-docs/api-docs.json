@@ -1596,6 +1596,148 @@
                 ]
             }
         },
+        "/api/board-customers": {
+            "get": {
+                "tags": [
+                    "Board Customers"
+                ],
+                "summary": "Danh sách ban chấp hành",
+                "operationId": "819a00b30bc1e44ba5b58586c5dfb528",
+                "parameters": [
+                    {
+                        "name": "search",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "status",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "perPage",
+                        "in": "query",
+                        "description": "Số lượng bản ghi trên mỗi trang",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "default": 10
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Danh sách ban chấp hành"
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Board Customers"
+                ],
+                "summary": "Thêm mới ban chấp hành",
+                "operationId": "06d8068a7e85a57dfda38ea8c6118456",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/BoardCustomerRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Tạo thành công"
+                    }
+                }
+            }
+        },
+        "/api/board-customers/{id}": {
+            "get": {
+                "tags": [
+                    "Board Customers"
+                ],
+                "summary": "Chi tiết ban chấp hành",
+                "operationId": "eafd34b8125a2795c6bc175794f08256",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Chi tiết ban chấp hành"
+                    }
+                }
+            },
+            "put": {
+                "tags": [
+                    "Board Customers"
+                ],
+                "summary": "Cập nhật ban chấp hành",
+                "operationId": "84d8b659138564e3d32bd3e4c666d029",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/BoardCustomerRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Cập nhật thành công"
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "Board Customers"
+                ],
+                "summary": "Xóa ban chấp hành",
+                "operationId": "ef748c57b33c5129d440a21e91dd6f59",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Xóa thành công"
+                    }
+                }
+            }
+        },
         "/api/documents": {
             "get": {
                 "tags": [
@@ -2071,6 +2213,82 @@
     },
     "components": {
         "schemas": {
+            "BoardCustomerRequest": {
+                "required": [
+                    "login_code",
+                    "card_code",
+                    "full_name",
+                    "gender",
+                    "phone",
+                    "email",
+                    "unit_name",
+                    "unit_position",
+                    "association_position",
+                    "term"
+                ],
+                "properties": {
+                    "login_code": {
+                        "type": "string",
+                        "example": "123456"
+                    },
+                    "card_code": {
+                        "type": "string",
+                        "example": "ABC-987"
+                    },
+                    "full_name": {
+                        "type": "string",
+                        "example": "Nguyễn Văn A"
+                    },
+                    "birth_date": {
+                        "type": "string",
+                        "format": "date",
+                        "example": "1990-05-20"
+                    },
+                    "gender": {
+                        "type": "string",
+                        "enum": [
+                            "male",
+                            "female",
+                            "other"
+                        ],
+                        "example": "male"
+                    },
+                    "phone": {
+                        "type": "string",
+                        "example": "0987654321"
+                    },
+                    "email": {
+                        "type": "string",
+                        "format": "email",
+                        "example": "nguyenvana@example.com"
+                    },
+                    "unit_name": {
+                        "type": "string",
+                        "example": "Công ty ABC"
+                    },
+                    "unit_position": {
+                        "type": "string",
+                        "example": "Giám đốc"
+                    },
+                    "association_position": {
+                        "type": "string",
+                        "example": "Thành viên"
+                    },
+                    "term": {
+                        "type": "integer",
+                        "example": 2024
+                    },
+                    "attendance_permission": {
+                        "type": "boolean",
+                        "example": true
+                    },
+                    "avatar": {
+                        "type": "string",
+                        "format": "binary"
+                    }
+                },
+                "type": "object"
+            },
             "StoreBusinessRequest": {
                 "title": "Store Business Request",
                 "description": "Yêu cầu tạo mới ngành nghề",
@@ -2778,6 +2996,10 @@
         {
             "name": "TargetCustomerGroups",
             "description": "Quản lý nhóm khách hàng"
+        },
+        {
+            "name": "Board Customers",
+            "description": "Quản lý ban chấp hành"
         },
         {
             "name": "Documents",
