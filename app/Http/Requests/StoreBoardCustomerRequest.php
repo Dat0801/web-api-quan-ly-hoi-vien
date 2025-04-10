@@ -23,7 +23,7 @@ use Illuminate\Foundation\Http\FormRequest;
  *     @OA\Property(property="avatar", type="string", format="binary"),
  * )
  */
-class BoardCustomerRequest extends FormRequest
+class StoreBoardCustomerRequest extends FormRequest
 {
     public function authorize()
     {
@@ -33,23 +33,24 @@ class BoardCustomerRequest extends FormRequest
     public function rules()
     {
         return [
-            'login_code' => 'required|unique:board_customers',
-            'card_code' => 'required|unique:board_customers',
-            'full_name' => 'required',
+            'login_code' => 'required|string|max:255|unique:board_customers',
+            'card_code' => 'required|string|max:255|unique:board_customers',
+            'full_name' => 'required|string|max:255',
             'birth_date' => 'nullable|date',
             'gender' => 'required|in:male,female,other',
-            'phone' => 'required',
-            'email' => 'required|email',
-            'unit_name' => 'required',
-            'unit_position' => 'required',
-            'association_position' => 'required',
-            'term' => 'required|integer',
+            'phone' => 'required|string|max:15',
+            'email' => 'required|email|max:255',
+            'unit_name' => 'required|string|max:255',
+            'unit_position' => 'required|string|max:255',
+            'association_position' => 'required|string|max:255',
+            'term' => 'required|integer|min:1900|max:2100',
             'attendance_permission' => 'nullable|boolean',
-            'avatar' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            'avatar' => 'nullable|string',
         ];
     }
 
-    public function messages() {
+    public function messages()
+    {
         return [
             'login_code.required' => 'Mã đăng nhập là bắt buộc.',
             'login_code.unique' => 'Mã đăng nhập phải là duy nhất.',
@@ -58,19 +59,19 @@ class BoardCustomerRequest extends FormRequest
             'full_name.required' => 'Họ và tên là bắt buộc.',
             'birth_date.date' => 'Ngày sinh phải là một ngày hợp lệ.',
             'gender.required' => 'Giới tính là bắt buộc.',
-            'gender.in' => 'Giới tính phải là một trong các giá trị: nam, nữ, hoặc khác.',
+            'gender.in' => 'Giới tính phải là nam, nữ, hoặc khác.',
             'phone.required' => 'Số điện thoại là bắt buộc.',
             'email.required' => 'Địa chỉ email là bắt buộc.',
-            'email.email' => 'Địa chỉ email phải là một email hợp lệ.',
+            'email.email' => 'Địa chỉ email phải là hợp lệ.',
             'unit_name.required' => 'Tên đơn vị là bắt buộc.',
             'unit_position.required' => 'Chức vụ trong đơn vị là bắt buộc.',
             'association_position.required' => 'Chức vụ trong hiệp hội là bắt buộc.',
             'term.required' => 'Nhiệm kỳ là bắt buộc.',
             'term.integer' => 'Nhiệm kỳ phải là một số nguyên.',
+            'term.min' => 'Nhiệm kỳ phải lớn hơn hoặc bằng 1900.',
+            'term.max' => 'Nhiệm kỳ phải nhỏ hơn hoặc bằng 2100.',
             'attendance_permission.boolean' => 'Quyền tham dự phải là đúng hoặc sai.',
-            'avatar.image' => 'Ảnh đại diện phải là một hình ảnh.',
-            'avatar.mimes' => 'Ảnh đại diện phải có định dạng: jpeg, png, jpg, gif, svg.',
-            'avatar.max' => 'Ảnh đại diện không được lớn hơn 2048 kilobytes.',
+            'avatar.string' => 'Ảnh đại diện phải là một chuỗi hợp lệ.',
         ];
     }
 }

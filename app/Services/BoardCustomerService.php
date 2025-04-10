@@ -26,28 +26,11 @@ class BoardCustomerService
 
     public function createCustomer($data)
     {
-        if (isset($data['avatar'])) {
-            $file = $data['avatar'];
-            $fileName = uniqid() . '_' . $file->getClientOriginalName();
-            $data['avatar'] = $file->storeAs('avatars', $fileName, 'public');
-        }
-
         return $this->boardCustomerRepo->create($data);
     }
 
     public function updateCustomer($id, $data)
     {
-        $customer = $this->boardCustomerRepo->findById($id);
-
-        if (isset($data['avatar'])) {
-            if ($customer->avatar) {
-                Storage::disk('public')->delete($customer->avatar);
-            }
-            $file = $data['avatar'];
-            $fileName = uniqid() . '_' . $file->getClientOriginalName();
-            $data['avatar'] = $file->storeAs('avatars', $fileName, 'public');
-        }
-
         return $this->boardCustomerRepo->update($id, $data);
     }
 

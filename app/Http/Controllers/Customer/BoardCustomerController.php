@@ -3,7 +3,8 @@
 namespace App\Http\Controllers\Customer;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\BoardCustomerRequest;
+use App\Http\Requests\StoreBoardCustomerRequest;
+use App\Http\Requests\UpdateBoardCustomerRequest;
 use App\Services\BoardCustomerService;
 use App\Http\Resources\BoardCustomerResource;
 use Illuminate\Http\Request;
@@ -67,8 +68,9 @@ class BoardCustomerController extends Controller
      *     @OA\Response(response=201, description="Tạo thành công")
      * )
      */
-    public function store(BoardCustomerRequest $request)
+    public function store(StoreBoardCustomerRequest $request)
     {
+
         $customer = $this->boardCustomerService->createCustomer($request->validated());
         return new BoardCustomerResource($customer);
     }
@@ -98,7 +100,7 @@ class BoardCustomerController extends Controller
      *     @OA\Response(response=200, description="Cập nhật thành công")
      * )
      */
-    public function update(BoardCustomerRequest $request, $id)
+    public function update(UpdateBoardCustomerRequest $request, $id)
     {
         $customer = $this->boardCustomerService->updateCustomer($id, $request->validated());
         return new BoardCustomerResource($customer);
