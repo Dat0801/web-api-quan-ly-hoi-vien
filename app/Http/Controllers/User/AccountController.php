@@ -56,7 +56,7 @@ class AccountController extends Controller
      *     @OA\RequestBody(
      *         required=true,
      *         @OA\MediaType(
-     *             mediaType="multipart/form-data",
+     *             mediaType="application/json",
      *             @OA\Schema(
      *                 ref="#/components/schemas/StoreUserRequest", 
      *             )
@@ -88,16 +88,16 @@ class AccountController extends Controller
     }
 
     /**
-     * @OA\POST(
+     * @OA\PUT(
      *     path="/api/users/{id}",
-     *     summary="Cập nhật thông tin người dùng (dùng POST với _method=PUT)",
+     *     summary="Cập nhật thông tin người dùng",
      *     tags={"Users"},
      *     security={{"bearerAuth": {}}},
      *     @OA\Parameter(name="id", in="path", required=true, @OA\Schema(type="integer")),
      *     @OA\RequestBody(
      *         required=true,
      *         @OA\MediaType(
-     *             mediaType="multipart/form-data",
+     *             mediaType="application/json",
      *             @OA\Schema(
      *                 ref="#/components/schemas/UpdateUserRequest", 
      *             )

@@ -11,22 +11,11 @@ use App\Traits\HasPaginatedResource;
  *     title="Role",
  *     description="Thông tin vai trò",
  *     @OA\Property(property="id", type="integer", example=1, description="ID của vai trò."),
- *     @OA\Property(property="roleCode", type="string", example="ADMIN001", description="Mã của vai trò."),
- *     @OA\Property(property="roleName", type="string", example="Quản trị viên", description="Tên của vai trò."),
- *     @OA\Property(
- *         property="permissions",
- *         type="array",
- *         description="Danh sách quyền của vai trò",
- *         @OA\Items(
- *             type="object",
- *             @OA\Property(property="groupName", type="string", example="Quản lý người dùng", description="Tên nhóm quyền."),
- *             @OA\Property(
- *                 property="permissions",
- *                 type="array",
- *                 @OA\Items(ref="#/components/schemas/Permission")
- *             )
- *         )
- *     )
+ *     @OA\Property(property="role_id", type="string", example="ADMIN001", description="Mã của vai trò."),
+ *     @OA\Property(property="role_name", type="string", example="Quản trị viên", description="Tên của vai trò."),
+ *     @OA\Property(property="permission_ids", type="array", @OA\Items(type="integer"), example={1, 2, 3}, description="Danh sách ID quyền của vai trò."),
+ *     @OA\Property(property="created_at", type="string", format="date-time", example="2024-02-17T12:30:45Z", description="Thời gian tạo vai trò."),
+ *     @OA\Property(property="updated_at", type="string", format="date-time", example="2024-02-17T12:30:45Z", description="Thời gian cập nhật vai trò.")
  * )
  */
 class RoleResource extends JsonResource
@@ -37,21 +26,11 @@ class RoleResource extends JsonResource
     {
         return [
             'id' => $this->id,
-            'roleCode' => $this->role_code,
-            'roleName' => $this->role_name,
-            $this->mergeWhen(!request()->is('api/users*'), [
-                'permissions' => $this->groupPermissions(),
-            ]),
+            'role_id' => $this->role_id,
+            'role_name' => $this->role_name,
+            'permission_ids' => $this->permissions->pluck('id')->toArray(),
+            'created_at' => $this->created_at,
+            'updated_at' => $this->updated_at,
         ];
-    }
-
-    private function groupPermissions()
-    {
-        return $this->permissions->groupBy('group_name')->map(function ($permissions, $groupName) {
-            return [
-                'groupName' => $groupName,
-                'permissions' => PermissionResource::collection($permissions),
-            ];
-        })->values();
     }
 }

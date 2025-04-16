@@ -35,15 +35,6 @@ class UserService
             $data['password'] = bcrypt($data['password']);
         }
 
-        if (!empty($data['avatar'])) {
-            $file = $data['avatar'];
-            $uploadedFile = Cloudinary::upload($file->getRealPath(), [
-                'folder' => 'user_avatars'
-            ])->getResponse();
-
-            $data['avatar'] = $uploadedFile['secure_url'] ?? null;
-        }
-
         return $this->userRepo->create($data);
     }
 
@@ -56,20 +47,6 @@ class UserService
             $data['password'] = bcrypt($data['password']);
         } else {
             unset($data['password']);
-        }
-
-        if (!empty($data['avatar'])) {
-            if ($user->avatar) {
-                $publicId = pathinfo(parse_url($user->avatar, PHP_URL_PATH), PATHINFO_FILENAME);
-                Cloudinary::destroy('user_avatars/' . $publicId);
-            }
-
-            $file = $data['avatar'];
-            $uploadedFile = Cloudinary::upload($file->getRealPath(), [
-                'folder' => 'user_avatars' 
-            ])->getResponse(); 
-
-            $data['avatar'] = $uploadedFile['secure_url'] ?? null;
         }
 
         return $this->userRepo->update($id, $data);

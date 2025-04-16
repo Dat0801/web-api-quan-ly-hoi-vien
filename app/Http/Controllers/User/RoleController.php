@@ -91,7 +91,7 @@ class RoleController extends Controller
      *         required=true,
      *         @OA\MediaType(
      *             mediaType="application/json",
-     *             @OA\Schema(ref="#/components/schemas/UpdateRoleRequest")
+     *             @OA\Schema(ref="#/components/schemas/StoreRoleRequest")
      *         )
      *     ),
      *     @OA\Response(response=200, description="Cập nhật vai trò thành công", @OA\JsonContent(ref="#/components/schemas/Role"))

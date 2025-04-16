@@ -4,6 +4,6 @@ namespace App\Interfaces;
 
 interface RoleRepositoryInterface extends BaseRepositoryInterface
 {
-    public function getRoles(?string $filters);
+    public function getRoles(string $filters);
 
 }

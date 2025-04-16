@@ -1775,7 +1775,7 @@
                 "requestBody": {
                     "required": true,
                     "content": {
-                        "multipart/form-data": {
+                        "application/json": {
                             "schema": {
                                 "$ref": "#/components/schemas/StoreDocumentRequest"
                             }
@@ -1907,7 +1907,7 @@
                 "requestBody": {
                     "required": true,
                     "content": {
-                        "multipart/form-data": {
+                        "application/json": {
                             "schema": {
                                 "$ref": "#/components/schemas/StoreUserRequest"
                             }
@@ -1968,12 +1968,12 @@
                     }
                 ]
             },
-            "post": {
+            "put": {
                 "tags": [
                     "Users"
                 ],
-                "summary": "Cập nhật thông tin người dùng (dùng POST với _method=PUT)",
-                "operationId": "5ae5fdd4a444b02ee9827567dc7af683",
+                "summary": "Cập nhật thông tin người dùng",
+                "operationId": "cc620aa9b1fccfa8b3c334edfdb52b48",
                 "parameters": [
                     {
                         "name": "id",
@@ -1987,7 +1987,7 @@
                 "requestBody": {
                     "required": true,
                     "content": {
-                        "multipart/form-data": {
+                        "application/json": {
                             "schema": {
                                 "$ref": "#/components/schemas/UpdateUserRequest"
                             }
@@ -2159,7 +2159,7 @@
                     "content": {
                         "application/json": {
                             "schema": {
-                                "$ref": "#/components/schemas/UpdateRoleRequest"
+                                "$ref": "#/components/schemas/StoreRoleRequest"
                             }
                         }
                     }
@@ -2469,27 +2469,27 @@
                 "title": "Store Role Request",
                 "description": "Yêu cầu tạo mới vai trò",
                 "required": [
-                    "roleName",
-                    "roleCode",
-                    "permissions"
+                    "role_name",
+                    "role_id",
+                    "permission_ids"
                 ],
                 "properties": {
-                    "roleName": {
+                    "role_name": {
                         "description": "Tên vai trò.",
                         "type": "string",
                         "example": "Quản trị viên"
                     },
-                    "roleCode": {
+                    "role_id": {
                         "description": "Mã vai trò duy nhất.",
                         "type": "string",
                         "example": "ADMIN001"
                     },
-                    "permissions": {
+                    "permission_ids": {
                         "description": "Danh sách quyền được cấp cho vai trò.",
                         "type": "array",
                         "items": {
                             "type": "string",
-                            "example": "1.1"
+                            "example": "1"
                         }
                     }
                 },
@@ -2528,9 +2528,8 @@
                     "name",
                     "email",
                     "password",
-                    "passwordConfirmation",
-                    "phoneNumber",
-                    "roleId",
+                    "phone_number",
+                    "role_id",
                     "status"
                 ],
                 "properties": {
@@ -2545,7 +2544,7 @@
                         "format": "email",
                         "example": "thanhdat@example.com"
                     },
-                    "phoneNumber": {
+                    "phone_number": {
                         "description": "Số điện thoại của người dùng.",
                         "type": "string",
                         "example": "0399839848"
@@ -2554,7 +2553,7 @@
                         "description": "Ảnh đại diện của người dùng (file ảnh).",
                         "type": "file"
                     },
-                    "roleId": {
+                    "role_id": {
                         "description": "ID vai trò của người dùng.",
                         "type": "integer",
                         "example": 1
@@ -2569,32 +2568,6 @@
                         "type": "string",
                         "format": "password",
                         "example": "password123"
-                    },
-                    "passwordConfirmation": {
-                        "description": "Xác nhận mật khẩu của người dùng.",
-                        "type": "string",
-                        "format": "password",
-                        "example": "password123"
-                    }
-                },
-                "type": "object"
-            },
-            "UpdateRoleRequest": {
-                "title": "Update Role Request",
-                "description": "Yêu cầu cập nhật vai trò",
-                "properties": {
-                    "roleName": {
-                        "description": "Tên vai trò.",
-                        "type": "string",
-                        "example": "Quản trị viên"
-                    },
-                    "permissions": {
-                        "description": "Danh sách quyền được cấp cho vai trò.",
-                        "type": "array",
-                        "items": {
-                            "type": "string",
-                            "example": "1.1"
-                        }
                     }
                 },
                 "type": "object"
@@ -2603,20 +2576,13 @@
                 "title": "Update User Request",
                 "description": "Yêu cầu cập nhật thông tin người dùng",
                 "required": [
-                    "_method",
                     "password",
-                    "passwordConfirmation",
-                    "phoneNumber",
-                    "roleId",
+                    "phone_number",
+                    "role_id",
                     "status"
                 ],
                 "properties": {
-                    "_method": {
-                        "description": "Giả lập phương thức PUT để cập nhật tài nguyên.",
-                        "type": "string",
-                        "example": "PUT"
-                    },
-                    "phoneNumber": {
+                    "phone_number": {
                         "description": "Số điện thoại của người dùng.",
                         "type": "string",
                         "example": "0123456789"
@@ -2626,7 +2592,7 @@
                         "type": "string",
                         "format": "binary"
                     },
-                    "roleId": {
+                    "role_id": {
                         "description": "ID của vai trò mới của người dùng.",
                         "type": "integer",
                         "example": 2
@@ -2638,12 +2604,6 @@
                     },
                     "password": {
                         "description": "Mật khẩu mới, tối thiểu 8 ký tự, cần nhập lại để xác nhận.",
-                        "type": "string",
-                        "format": "password",
-                        "example": "newpassword123"
-                    },
-                    "passwordConfirmation": {
-                        "description": "Xác nhận mật khẩu mới của người dùng.",
                         "type": "string",
                         "format": "password",
                         "example": "newpassword123"
@@ -2843,35 +2803,39 @@
                         "type": "integer",
                         "example": 1
                     },
-                    "roleCode": {
+                    "role_id": {
                         "description": "Mã của vai trò.",
                         "type": "string",
                         "example": "ADMIN001"
                     },
-                    "roleName": {
+                    "role_name": {
                         "description": "Tên của vai trò.",
                         "type": "string",
                         "example": "Quản trị viên"
                     },
-                    "permissions": {
-                        "description": "Danh sách quyền của vai trò",
+                    "permission_id": {
+                        "description": "Danh sách ID quyền của vai trò.",
                         "type": "array",
                         "items": {
-                            "properties": {
-                                "groupName": {
-                                    "description": "Tên nhóm quyền.",
-                                    "type": "string",
-                                    "example": "Quản lý người dùng"
-                                },
-                                "permissions": {
-                                    "type": "array",
-                                    "items": {
-                                        "$ref": "#/components/schemas/Permission"
-                                    }
-                                }
-                            },
-                            "type": "object"
-                        }
+                            "type": "integer"
+                        },
+                        "example": [
+                            1,
+                            2,
+                            3
+                        ]
+                    },
+                    "created_at": {
+                        "description": "Thời gian tạo vai trò.",
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2024-02-17T12:30:45Z"
+                    },
+                    "updated_at": {
+                        "description": "Thời gian cập nhật vai trò.",
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2024-02-17T12:30:45Z"
                     }
                 },
                 "type": "object"
@@ -2919,31 +2883,15 @@
                         "format": "email",
                         "example": "user@example.com"
                     },
-                    "phoneNumber": {
+                    "phone_number": {
                         "description": "Số điện thoại của người dùng.",
                         "type": "string",
                         "example": "0123456789"
                     },
-                    "role": {
-                        "description": "Thông tin vai trò của người dùng",
-                        "properties": {
-                            "id": {
-                                "description": "ID vai trò của người dùng.",
-                                "type": "integer",
-                                "example": 2
-                            },
-                            "roleCode": {
-                                "description": "Mã vai trò của người dùng.",
-                                "type": "string",
-                                "example": "USER001"
-                            },
-                            "roleName": {
-                                "description": "Tên vai trò của người dùng.",
-                                "type": "string",
-                                "example": "User"
-                            }
-                        },
-                        "type": "object"
+                    "role_id": {
+                        "description": "ID của vai trò người dùng.",
+                        "type": "integer",
+                        "example": 2
                     },
                     "status": {
                         "description": "Trạng thái tài khoản của người dùng (true: hoạt động, false: bị khóa).",
@@ -2956,12 +2904,24 @@
                         "example": "https://example.com/avatar.jpg",
                         "nullable": true
                     },
-                    "lastLogin": {
+                    "last_login": {
                         "description": "Thời gian đăng nhập lần cuối của người dùng.",
                         "type": "string",
                         "format": "date-time",
                         "example": "2024-02-17 12:30:45",
                         "nullable": true
+                    },
+                    "created_at": {
+                        "description": "Thời gian tạo tài khoản.",
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2024-02-17 12:30:45"
+                    },
+                    "updated_at": {
+                        "description": "Thời gian cập nhật tài khoản.",
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2024-02-17 12:30:45"
                     }
                 },
                 "type": "object"
