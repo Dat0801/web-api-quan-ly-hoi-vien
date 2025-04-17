@@ -30,32 +30,22 @@ Route::post('/login', [AuthController::class, 'login'])->name('login');
 
 Route::middleware(['auth:sanctum', 'token.expiration'])->group(function () {
 
-    Route::get('/user', function (Request $request) {
-        return new UserResource($request->user());
-    });
+    // Route::get('/user', function (Request $request) {
+    //     return new UserResource($request->user());
+    // });
 
-    Route::prefix('documents')->group(function () {
-        Route::get('/', [DocumentController::class, 'index']);
-        Route::post('/', [DocumentController::class, 'store']);
-        Route::delete('/{id}', [DocumentController::class, 'destroy']);
-        Route::get('{id}/download', [DocumentController::class, 'download']);
-    });
+    Route::resource('documents', DocumentController::class, [
+        'only' => ['index', 'store', 'destroy'],
+    ]);
+    Route::get('/documents/{id}/download', [DocumentController::class, 'download']);
 
-    Route::prefix('users')->group(function () {
-        Route::get('/', [AccountController::class, 'index']);
-        Route::post('/', [AccountController::class, 'store']);
-        Route::get('/{id}', [AccountController::class, 'show']);
-        Route::put('/{id}', [AccountController::class, 'update']);
-        Route::delete('/{id}', [AccountController::class, 'destroy']);
-    });
+    Route::resource('users', AccountController::class, [
+        'only' => ['index', 'store', 'show', 'update', 'destroy'],
+    ]);
 
-    Route::prefix('roles')->group(function () {
-        Route::get('/', [RoleController::class, 'index']);
-        Route::post('/', [RoleController::class, 'store']);
-        Route::get('/{id}', [RoleController::class, 'show']);
-        Route::put('/{id}', [RoleController::class, 'update']);
-        Route::delete('/{id}', [RoleController::class, 'destroy']);
-    });
+    Route::resource('roles', RoleController::class, [
+        'only' => ['index', 'store', 'show', 'update', 'destroy'],
+    ]);
 
     Route::prefix('markets')->group(function () {
         Route::get('/', [MarketController::class, 'index']);

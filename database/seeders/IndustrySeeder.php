@@ -20,19 +20,29 @@ class IndustrySeeder extends Seeder
             [
                 'industry_name' => 'Công nghệ thông tin',
                 'industry_code' => 'BCH22',
+                'created_at' => now(),
+                'updated_at' => now(),
             ],
             [
                 'industry_name' => 'Sản xuất',
                 'industry_code' => 'BCH16',
+                'created_at' => now(),
+                'updated_at' => now(),
             ],
             [
                 'industry_name' => 'Phân phối',
                 'industry_code' => 'BCH34',
+                'created_at' => now(),
+                'updated_at' => now(),
             ],
             [
                 'industry_name' => 'Xây dựng',
                 'industry_code' => 'BCH27',
+                'created_at' => now(),
+                'updated_at' => now(),
             ],
         ]);
+
+        Industry::factory(10)->create();
     }
 }

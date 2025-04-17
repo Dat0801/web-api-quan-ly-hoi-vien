@@ -50,7 +50,7 @@
                                             "type": "string",
                                             "example": "1|asdhjkashdkjashdkjashdkj"
                                         },
-                                        "expiresAt": {
+                                        "expires_at": {
                                             "type": "string",
                                             "example": "2025-02-17 14:00:00"
                                         }
@@ -2813,7 +2813,7 @@
                         "type": "string",
                         "example": "Quản trị viên"
                     },
-                    "permission_id": {
+                    "permission_ids": {
                         "description": "Danh sách ID quyền của vai trò.",
                         "type": "array",
                         "items": {

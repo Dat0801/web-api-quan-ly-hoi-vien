@@ -19,19 +19,29 @@ class MarketSeeder extends Seeder
             [
                 'market_code' => 'TT43',
                 'market_name' => 'Giao thông vận tải',
+                'created_at' => now(),
+                'updated_at' => now(),
             ],
             [
                 'market_code' => 'TT53',
                 'market_name' => 'Y tế',
+                'created_at' => now(),
+                'updated_at' => now(),
             ],
             [
                 'market_code' => 'TT60',
                 'market_name' => 'Du lịch',
+                'created_at' => now(),
+                'updated_at' => now(),
             ],
             [
                 'market_code' => 'TT99',
                 'market_name' => 'Tài nguyên - môi trường',
+                'created_at' => now(),
+                'updated_at' => now(),
             ],
         ]);
+
+        Market::factory(10)->create();
     }
 }

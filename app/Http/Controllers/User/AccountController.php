@@ -81,10 +81,9 @@ class AccountController extends Controller
      *     @OA\Response(response=200, description="Thông tin người dùng", @OA\JsonContent(ref="#/components/schemas/User"))
      * )
      */
-    public function show($id)
+    public function show(User $user)
     {
-        $account = User::findOrFail($id);
-        return $this->success(new UserResource($account), 'Lấy thông tin người dùng thành công.');
+        return $this->success(new UserResource($user), 'Lấy thông tin người dùng thành công.');
     }
 
     /**
@@ -106,11 +105,10 @@ class AccountController extends Controller
      *     @OA\Response(response=200, description="Người dùng đã cập nhật", @OA\JsonContent(ref="#/components/schemas/User"))
      * )
      */
-    public function update(UpdateUserRequest $request, $id)
+    public function update(UpdateUserRequest $request, User $user)
     {
-        $account = User::findOrFail($id);
-        $user = $this->userService->updateUser($account->id, $request->validated());
-        return $this->success(new UserResource($user), 'Người dùng đã được cập nhật thành công.');
+        $updated_user = $this->userService->updateUser($user->id, $request->validated());
+        return $this->success(new UserResource($updated_user), 'Người dùng đã được cập nhật thành công.');
     }
 
     /**

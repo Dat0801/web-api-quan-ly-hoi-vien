@@ -33,7 +33,7 @@ class AuthController extends Controller
      *         description="Đăng nhập thành công",
      *         @OA\JsonContent(
      *             @OA\Property(property="token", type="string", example="1|asdhjkashdkjashdkjashdkj"),
-     *             @OA\Property(property="expiresAt", type="string", example="2025-02-17 14:00:00")
+     *             @OA\Property(property="expires_at", type="string", example="2025-02-17 14:00:00")
      *         )
      *     ),
      *     @OA\Response(
@@ -66,7 +66,7 @@ class AuthController extends Controller
 
         return $this->success([
             'token' => $token,
-            'expiresAt' => now()->addHours(4),
+            'expires_at' => now()->addHours(4),
         ], 'Login successful');
     }
 
