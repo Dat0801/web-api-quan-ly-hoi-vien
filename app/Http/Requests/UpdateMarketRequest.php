@@ -19,12 +19,4 @@ class UpdateMarketRequest extends FormRequest
             'description' => 'nullable|string',
         ];
     }
-
-    protected function prepareForValidation()
-    {
-        $this->merge([
-            'market_code' => $this->input('marketCode'),
-            'market_name' => $this->input('marketName'),
-        ]);
-    }
 }

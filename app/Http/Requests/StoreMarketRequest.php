@@ -3,13 +3,16 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Contracts\Validation\Validator;
+use Illuminate\Http\Exceptions\HttpResponseException;
+
 /**
  * @OA\Schema(
  *     schema="StoreMarketRequest",
  *     title="Store Martket Request",
- *     required={"marketCode", "marketName"},
- *     @OA\Property(property="marketCode", type="string", maxLength=50, example="MK001"),
- *     @OA\Property(property="marketName", type="string", maxLength=255, example="Chợ Bến Thành"),
+ *     required={"market_code", "market_name"},
+ *     @OA\Property(property="market_code", type="string", maxLength=50, example="MK001"),
+ *     @OA\Property(property="market_name", type="string", maxLength=255, example="Chợ Bến Thành"),
  *     @OA\Property(property="description", type="string", nullable=true, example="Chợ nổi tiếng tại TP.HCM")
  * )
  */
@@ -29,11 +32,11 @@ class StoreMarketRequest extends FormRequest
         ];
     }
 
-    protected function prepareForValidation()
+    protected function failedValidation(Validator $validator)
     {
-        $this->merge([
-            'market_code' => $this->input('marketCode'),
-            'market_name' => $this->input('marketName'),
-        ]);
+        throw new HttpResponseException(response()->json([
+            'message' => 'The given data was invalid.',
+            'errors' => $validator->errors(),
+        ], 422));
     }
 }

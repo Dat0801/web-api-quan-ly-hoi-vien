@@ -2417,16 +2417,16 @@
             "StoreMarketRequest": {
                 "title": "Store Martket Request",
                 "required": [
-                    "marketCode",
-                    "marketName"
+                    "market_code",
+                    "market_name"
                 ],
                 "properties": {
-                    "marketCode": {
+                    "market_code": {
                         "type": "string",
                         "maxLength": 50,
                         "example": "MK001"
                     },
-                    "marketName": {
+                    "market_name": {
                         "type": "string",
                         "maxLength": 255,
                         "example": "Chợ Bến Thành"
@@ -2738,11 +2738,11 @@
                         "type": "integer",
                         "example": 1
                     },
-                    "marketCode": {
+                    "market_code": {
                         "type": "string",
                         "example": "MK001"
                     },
-                    "marketName": {
+                    "market_name": {
                         "type": "string",
                         "example": "Chợ Bến Thành"
                     },

@@ -11,14 +11,13 @@ use App\Traits\HasPaginatedResource;
  *     title="Market",
  *     description="Chi tiết thông tin thị trường",
  *     @OA\Property(property="id", type="integer", example=1),
- *     @OA\Property(property="marketCode", type="string", example="MK001"),
- *     @OA\Property(property="marketName", type="string", example="Chợ Bến Thành"),
+ *     @OA\Property(property="market_code", type="string", example="MK001"),
+ *     @OA\Property(property="market_name", type="string", example="Chợ Bến Thành"),
  *     @OA\Property(property="description", type="string", nullable=true, example="Chợ nổi tiếng tại TP.HCM")
  * )
  */
 class MarketResource extends JsonResource
 {
-    use HasPaginatedResource;
     public function toArray($request)
     {
         return [

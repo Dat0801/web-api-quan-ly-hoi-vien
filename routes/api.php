@@ -7,11 +7,9 @@ use App\Http\Controllers\Category\IndustryController;
 use App\Http\Controllers\Category\MarketController;
 use App\Http\Controllers\Category\OrganizationController;
 use App\Http\Controllers\Customer\BoardCustomerController;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\DocumentController;
-use App\Http\Resources\UserResource;
 use App\Http\Controllers\User\AccountController;
 use App\Http\Controllers\User\RoleController;
 use App\Http\Controllers\Category\TargetCustomerGroupController;
@@ -30,10 +28,6 @@ Route::post('/login', [AuthController::class, 'login'])->name('login');
 
 Route::middleware(['auth:sanctum', 'token.expiration'])->group(function () {
 
-    // Route::get('/user', function (Request $request) {
-    //     return new UserResource($request->user());
-    // });
-
     Route::resource('documents', DocumentController::class, [
         'only' => ['index', 'store', 'destroy'],
     ]);
@@ -47,69 +41,37 @@ Route::middleware(['auth:sanctum', 'token.expiration'])->group(function () {
         'only' => ['index', 'store', 'show', 'update', 'destroy'],
     ]);
 
-    Route::prefix('markets')->group(function () {
-        Route::get('/', [MarketController::class, 'index']);
-        Route::post('/', [MarketController::class, 'store']);
-        Route::get('/{id}', [MarketController::class, 'show']);
-        Route::put('/{id}', [MarketController::class, 'update']);
-        Route::delete('/{id}', [MarketController::class, 'destroy']);
-    });
+    Route::resource('markets', MarketController::class, [
+        'only' => ['index', 'store', 'show', 'update', 'destroy'],
+    ]);
 
-    Route::prefix('industries')->group(function () {
-        Route::get('/', [IndustryController::class, 'index']);
-        Route::post('/', [IndustryController::class, 'store']);
-        Route::get('/{id}', [IndustryController::class, 'show']);
-        Route::put('/{id}', [IndustryController::class, 'update']);
-        Route::delete('/{id}', [IndustryController::class, 'destroy']);
-    });
+    Route::resource('industries', IndustryController::class, [
+        'only' => ['index', 'store', 'show', 'update', 'destroy'],
+    ]);
 
-    Route::prefix('fields')->group(callback: function () {
-        Route::get('/', [FieldController::class, 'index']);
-        Route::post('/', [FieldController::class, 'store']);
-        Route::get('/{id}', [FieldController::class, 'show']);
-        Route::put('/{id}', [FieldController::class, 'update']);
-        Route::delete('/{id}', [FieldController::class, 'destroy']);
-    });
+    Route::resource('fields', FieldController::class, [
+        'only' => ['index', 'store', 'show', 'update', 'destroy'],
+    ]);
 
-    Route::prefix('businesses')->group(callback: function () {
-        Route::get('/', [BusinessController::class, 'index']);
-        Route::post('/', [BusinessController::class, 'store']);
-        Route::get('/{id}', [BusinessController::class, 'show']);
-        Route::put('/{id}', [BusinessController::class, 'update']);
-        Route::delete('/{id}', [BusinessController::class, 'destroy']);
-    });
+    Route::resource('businesses', BusinessController::class, [
+        'only' => ['index', 'store', 'show', 'update', 'destroy'],
+    ]);
 
-    Route::prefix('certificates')->group(callback: function () {
-        Route::get('/', [CertificateController::class, 'index']);
-        Route::post('/', [CertificateController::class, 'store']);
-        Route::get('/{id}', [CertificateController::class, 'show']);
-        Route::put('/{id}', [CertificateController::class, 'update']);
-        Route::delete('/{id}', [CertificateController::class, 'destroy']);
-    });
+    Route::resource('certificates', CertificateController::class, [
+        'only' => ['index', 'store', 'show', 'update', 'destroy'],
+    ]);
 
-    Route::prefix('organizations')->group(callback: function () {
-        Route::get('/', [OrganizationController::class, 'index']);
-        Route::post('/', [OrganizationController::class, 'store']);
-        Route::get('/{id}', [OrganizationController::class, 'show']);
-        Route::put('/{id}', [OrganizationController::class, 'update']);
-        Route::delete('/{id}', [OrganizationController::class, 'destroy']);
-    });
+    Route::resource('organizations', OrganizationController::class, [
+        'only' => ['index', 'store', 'show', 'update', 'destroy'],
+    ]);
 
-    Route::prefix('target-customer-groups')->group(callback: function () {
-        Route::get('/', [TargetCustomerGroupController::class, 'index']);
-        Route::post('/', [TargetCustomerGroupController::class, 'store']);
-        Route::get('/{id}', [TargetCustomerGroupController::class, 'show']);
-        Route::put('/{id}', [TargetCustomerGroupController::class, 'update']);
-        Route::delete('/{id}', [TargetCustomerGroupController::class, 'destroy']);
-    });
+    Route::resource('target-customer-groups', TargetCustomerGroupController::class, [
+        'only' => ['index', 'store', 'show', 'update', 'destroy'],
+    ]);
 
-    Route::prefix('board-customers')->group(callback: function () {
-        Route::get('/', [BoardCustomerController::class, 'index']);
-        Route::post('/', [BoardCustomerController::class, 'store']);
-        Route::get('/{id}', [BoardCustomerController::class, 'show']);
-        Route::put('/{id}', [BoardCustomerController::class, 'update']);
-        Route::delete('/{id}', [BoardCustomerController::class, 'destroy']);
-    });
+    Route::resource('board-customers', BoardCustomerController::class, [
+        'only' => ['index', 'store', 'show', 'update', 'destroy'],
+    ]);
 
     Route::post('/logout', [AuthController::class, 'logout']);
 });

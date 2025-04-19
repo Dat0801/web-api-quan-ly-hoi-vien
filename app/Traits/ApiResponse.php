@@ -3,21 +3,51 @@ namespace App\Traits;
 
 trait ApiResponse
 {
-    protected function success($data, string $message = '', int $status = 200)
+    protected function success($data = null, string $message = 'Success', int $status = 200)
     {
-        return response()->json([
-            'status'  => 'success',
+        $response = [
+            'status' => 'success',
             'message' => $message,
-            'data'    => $data,
-        ], $status);
+        ];
+
+        if ($data !== null) {
+            if (method_exists($data, 'items')) {
+                $response['data'] = $data->items();
+                $response['meta'] = [
+                    'pagination' => [
+                        'total' => $data->total(),
+                        'count' => $data->count(),
+                        'per_page' => $data->perPage(),
+                        'current_page' => $data->currentPage(),
+                        'total_pages' => $data->lastPage(),
+                        'links' => [
+                            'first' => $data->url(1),
+                            'last' => $data->url($data->lastPage()),
+                            'prev' => $data->previousPageUrl(),
+                            'next' => $data->nextPageUrl(),
+                        ],
+                    ],
+                ];
+            } else {
+                $response['data'] = $data;
+            }
+        }
+
+        return response()->json($response, $status);
     }
 
-    protected function error(string $message, int $status = 400)
+    protected function error(string $message, int $status = 400, $errors = null)
     {
-        return response()->json([
-            'status'  => 'error',
+        $response = [
+            'status' => 'error',
             'message' => $message,
-        ], $status);
+        ];
+
+        if ($errors !== null) {
+            $response['errors'] = $errors;
+        }
+
+        return response()->json($response, $status);
     }
 }
 

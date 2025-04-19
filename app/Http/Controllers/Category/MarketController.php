@@ -10,6 +10,7 @@ use App\Services\MarketService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use App\Traits\ApiResponse;
+use App\Models\Market;
 
 /**
  * @OA\Tag(
@@ -70,7 +71,7 @@ class MarketController extends Controller
     {
         $markets = $this->marketService->getMarkets(
             $request->get('search'),
-            $request->get('per_page', 10) 
+            $request->get('per_page', 10)
         );
         return $this->success($markets, "Lấy danh sách thị trường thành công");
     }
@@ -149,10 +150,9 @@ class MarketController extends Controller
      *     @OA\Response(response=404, description="Không tìm thấy thị trường")
      * )
      */
-    public function destroy($id): JsonResponse
+    public function destroy(Market $market): JsonResponse
     {
-        return $this->marketService->deleteMarket($id)
-            ? $this->success(null, 'Xóa thị trường thành công!')
-            : $this->error('Thị trường không tồn tại hoặc không thể xóa!', 404);
+        $this->marketService->deleteMarket($market->id);
+        return $this->success(null, 'Xóa thị trường thành công!');
     }
 }
