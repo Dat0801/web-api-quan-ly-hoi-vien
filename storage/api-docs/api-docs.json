@@ -46,13 +46,26 @@
                             "application/json": {
                                 "schema": {
                                     "properties": {
-                                        "token": {
+                                        "status": {
                                             "type": "string",
-                                            "example": "1|asdhjkashdkjashdkjashdkj"
+                                            "example": "success"
                                         },
-                                        "expires_at": {
+                                        "message": {
                                             "type": "string",
-                                            "example": "2025-02-17 14:00:00"
+                                            "example": "Login successful"
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "token": {
+                                                    "type": "string",
+                                                    "example": "1|asdhjkashdkjashdkjashdkj"
+                                                },
+                                                "expires_at": {
+                                                    "type": "string",
+                                                    "example": "2025-02-17 14:00:00"
+                                                }
+                                            },
+                                            "type": "object"
                                         }
                                     },
                                     "type": "object"
@@ -66,6 +79,10 @@
                             "application/json": {
                                 "schema": {
                                     "properties": {
+                                        "status": {
+                                            "type": "error",
+                                            "example": "success"
+                                        },
                                         "message": {
                                             "type": "string",
                                             "example": "Unauthorized"

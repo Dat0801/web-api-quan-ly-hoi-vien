@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreFieldRequest;
 use App\Http\Requests\UpdateFieldRequest;
 use App\Http\Resources\FieldResource;
+use App\Http\Resources\PaginatedResourceCollection;
 use App\Services\FieldService;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
@@ -62,12 +63,18 @@ class FieldController extends Controller
      *     )
      * )
      */
-    public function index(Request $request): JsonResponse
+    public function index(Request $request)
     {
         $search = $request->query('search');
         $perPage = (int) $request->query('per_page', 10);
+
         $fields = $this->fieldService->getFields($search, $perPage);
-        return $this->success(FieldResource::collection($fields), "Lấy danh sách lĩnh vực thành công");
+
+        $fields->setCollection(
+            FieldResource::collection($fields->getCollection())->collection
+        );
+
+        return $this->success($fields, "Lấy danh sách lĩnh vực thành công");
     }
 
     /**

@@ -64,7 +64,10 @@ class TargetCustomerGroupController extends Controller
     public function index(Request $request): JsonResponse       
     {
         $targetCustomerGroup = $this->targetCustomerGroupService->getTargetCustomerGroup($request->search, $request->per_page);
-        return $this->success(TargetCustomerGroupResource::collection($targetCustomerGroup), "Lấy danh sách nhóm khách hàng thành công");
+        $targetCustomerGroup->setCollection(
+            TargetCustomerGroupResource::collection($targetCustomerGroup->getCollection())->collection
+        );
+        return $this->success($targetCustomerGroup, "Lấy danh sách nhóm khách hàng thành công");
     }
 
     /**

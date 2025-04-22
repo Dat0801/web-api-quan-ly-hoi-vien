@@ -32,15 +32,20 @@ class AuthController extends Controller
      *         response=200,
      *         description="Đăng nhập thành công",
      *         @OA\JsonContent(
-     *             @OA\Property(property="token", type="string", example="1|asdhjkashdkjashdkjashdkj"),
-     *             @OA\Property(property="expires_at", type="string", example="2025-02-17 14:00:00")
+     *             @OA\Property(property="status", type="string", example="success"),
+     *             @OA\Property(property="message", type="string", example="Login successful"),
+     *             @OA\Property(property="data", type="object",
+     *                 @OA\Property(property="token", type="string", example="1|asdhjkashdkjashdkjashdkj"),
+     *                 @OA\Property(property="expires_at", type="string", example="2025-02-17 14:00:00")
+     *             )
      *         )
      *     ),
      *     @OA\Response(
      *         response=401,
      *         description="Unauthorized",
      *         @OA\JsonContent(
-     *             @OA\Property(property="message", type="string", example="Unauthorized")
+     *             @OA\Property(property="status", type="error", example="success"),
+     *            @OA\Property(property="message", type="string", example="Unauthorized"),
      *         )
      *     )
      * )

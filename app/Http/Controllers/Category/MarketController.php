@@ -11,6 +11,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use App\Traits\ApiResponse;
 use App\Models\Market;
+use App\Http\Resources\PaginatedResourceCollection;
 
 /**
  * @OA\Tag(
@@ -67,12 +68,17 @@ class MarketController extends Controller
      *     )
      * )
      */
-    public function index(Request $request): JsonResponse
+    public function index(Request $request)
     {
         $markets = $this->marketService->getMarkets(
             $request->get('search'),
             $request->get('per_page', 10)
         );
+
+        $markets->setCollection(
+            MarketResource::collection($markets->getCollection())->collection
+        );
+
         return $this->success($markets, "Lấy danh sách thị trường thành công");
     }
 

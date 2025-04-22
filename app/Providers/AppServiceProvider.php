@@ -28,6 +28,8 @@ use App\Repositories\TargetCustomerGroupRepository;
 use App\Interfaces\BoardCustomerRepositoryInterface;
 use App\Repositories\BoardCustomerRepository;
 
+use Illuminate\Database\Eloquent\Model;
+
 class AppServiceProvider extends ServiceProvider
 {
     /**
@@ -60,5 +62,6 @@ class AppServiceProvider extends ServiceProvider
     public function boot()
     {
         //
+        Model::preventLazyLoading();
     }
 }

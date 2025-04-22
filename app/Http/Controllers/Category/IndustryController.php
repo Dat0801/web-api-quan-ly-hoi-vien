@@ -64,7 +64,10 @@ class IndustryController extends Controller
     public function index(Request $request): JsonResponse
     {
         $industries = $this->industryService->getIndustries($request->search, $request->per_page);
-        return $this->success(IndustryResource::collection($industries), "Lấy danh sách ngành nghề thành công");
+        $industries->setCollection(
+            IndustryResource::collection($industries->getCollection())->collection
+        );
+        return $this->success($industries, "Lấy danh sách ngành nghề thành công");
     }
 
     /**

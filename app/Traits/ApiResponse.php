@@ -11,7 +11,7 @@ trait ApiResponse
         ];
 
         if ($data !== null) {
-            if (method_exists($data, 'items')) {
+            if (is_object($data) && method_exists($data, 'items')) {
                 $response['data'] = $data->items();
                 $response['meta'] = [
                     'pagination' => [

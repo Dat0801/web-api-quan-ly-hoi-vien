@@ -64,7 +64,12 @@ class CertificateController extends Controller
     public function index(Request $request): JsonResponse
     {
         $certificate = $this->certificateService->getCertificate($request->search, $request->per_page);
-        return $this->success(CertificateResource::collection($certificate), "Lấy danh sách chứng chỉ thành công");
+
+        $certificate->setCollection(
+            CertificateResource::collection($certificate->getCollection())->collection
+        );
+
+        return $this->success($certificate, 'Lấy thông tin chứng chỉ thành công!');
     }
 
     /**
@@ -90,7 +95,10 @@ class CertificateController extends Controller
     public function store(StoreCertificateRequest $request): JsonResponse
     {
         $certificate = $this->certificateService->createCertificate($request->validated());
-        return $this->success(new CertificateResource($certificate), 'chứng chỉ đã được tạo thành công!', 201);
+
+        return $certificate
+            ? $this->success(new CertificateResource($certificate), 'Chứng chỉ đã được tạo thành công!', 201)
+            : $this->error('Không thể tạo chứng chỉ!', 500);
     }
 
     /**
@@ -120,7 +128,9 @@ class CertificateController extends Controller
     public function show($id): JsonResponse
     {
         $certificate = $this->certificateService->getCertificateById($id);
-        return $certificate ? $this->success(new CertificateResource($certificate)) : $this->error('chứng chỉ không tồn tại!', 404);
+        return $certificate 
+        ? $this->success(new CertificateResource($certificate)) 
+        : $this->error('Chứng chỉ không tồn tại!', 404);
     }
 
     /**
@@ -157,7 +167,9 @@ class CertificateController extends Controller
     public function update(UpdateCertificateRequest $request, $id): JsonResponse
     {
         $certificate = $this->certificateService->updateCertificate($id, $request->validated());
-        return $this->success(new CertificateResource($certificate), 'Cập nhật chứng chỉ thành công!');
+        return $certificate 
+        ? $this->success(new CertificateResource($certificate), 'Cập nhật chứng chỉ thành công!') 
+        : $this->error('Cập nhật chứng chỉ không thành công!', 500);
     }
 
     /**

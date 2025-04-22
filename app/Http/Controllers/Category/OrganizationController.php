@@ -64,7 +64,10 @@ class OrganizationController extends Controller
     public function index(Request $request): JsonResponse
     {
         $organization = $this->organizationService->getOrganization($request->search, $request->per_page);
-        return $this->success(OrganizationResource::collection($organization), "Lấy danh sách tổ chức thành công");
+        $organization->setCollection(
+            OrganizationResource::collection($organization->getCollection())->collection
+        );
+        return $this->success($organization, "Lấy danh sách tổ chức thành công");
     }
 
     /**

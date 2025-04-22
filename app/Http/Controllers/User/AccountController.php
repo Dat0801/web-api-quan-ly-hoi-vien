@@ -44,7 +44,11 @@ class AccountController extends Controller
             $request->get('search')
         );
 
-        return $this->success(UserResource::collection($users), 'Lấy danh sách người dùng thành công.');
+        $users->setCollection(
+            UserResource::collection($users->getCollection())->collection
+        );
+
+        return $this->success($users, 'Lấy danh sách người dùng thành công.');
     }
 
     /**

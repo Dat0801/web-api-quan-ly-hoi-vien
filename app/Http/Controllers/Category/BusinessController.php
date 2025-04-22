@@ -64,7 +64,10 @@ class BusinessController extends Controller
     public function index(Request $request): JsonResponse
     {
         $business = $this->businessService->getBusiness($request->search, $request->per_page);
-        return $this->success(BusinessResource::collection($business), "Lấy danh sách doanh nghiệp thành công");
+        $business->setCollection(
+            BusinessResource::collection($business->getCollection())->collection
+        );
+        return $this->success($business, "Lấy danh sách doanh nghiệp thành công");
     }
 
     /**
